@@ -6,28 +6,38 @@
     <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="login.css"/>
 
+
     <title>Thyme - Sign Up</title>
   </head>
 
   <body>
     <div class="page-container">
       <div id="login">
-        <form accept-charset="UTF-8" action="/session" method="post">
+        <form accept-charset="UTF-8" action="/session" method="post" id="form">
           <div class="form-header">
             <h1>Sign up to <span class="cursive">Thyme</span></h1>
           </div>
           <div class="form-body">
             <label for="login_field">Username</label>
-            <input autocapitalize="off" autocorrect="off" autofocus="autofocus" class="input-block" id="username-field" name="username" tabindex="1" type="text">
+            <div class="input-wrap">
+              <input autocapitalize="off" autocorrect="off" autofocus="autofocus" class="input-block" id="username-field" name="username" tabindex="1" type="text">
+              <span id="username_icon" style="display:none" class="pwd_ico fa fa-warning"><span class="tooltiptext">This field must not be empty.</span></span>
+            </div>
             <label for="login_field">Email address</label>
-            <input autocapitalize="off" autocorrect="off" autofocus="autofocus" class="input-block" id="email-field" name="email" tabindex="2" type="text">
+            <div class="input-wrap">
+              <input autocapitalize="off" autocorrect="off" autofocus="autofocus" class="input-block" id="email-field" name="email" tabindex="2" type="text">
+              <span id="email_icon" style="display:none" class="pwd_ico fa fa-warning"><span class="tooltiptext">This field must not be empty.</span></span>
+            </div>
             <label for="password">Password</label>
             <div class="input-wrap">
               <input class="input-block" id="password" name="password" tabindex="3" type="password">
-              <span id="password_icon" class="fa fa-warning"><span class="tooltiptext" id="password_error">Password too short.<br>Must be at least 8 digits.</span></span>
+              <meter max="4" id="password-strength-meter"></meter>
             </div>
             <label for="password">Repeat Password</label>
-            <input class="input-block" id="password2" tabindex="4" type="password">
+            <div class="input-wrap">
+              <input class="input-block" id="password2" tabindex="4" type="password">
+              <span id="password2_icon" style="display:none" class="pwd_ico fa fa-warning"><span class="tooltiptext">Passwords don't match.</span></span>
+            </div>
             <input class="btn" data-disable-with="Signing up…" name="commit" tabindex="5" value="Sign up" type="submit">
           </div>
         </form>
@@ -38,5 +48,9 @@
         </p>
       </div>
     </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="zxcvbn.js"></script>
+    <script type="text/javascript" src="signup.js"></script>
   </body>
 </html>

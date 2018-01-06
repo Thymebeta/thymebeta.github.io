@@ -156,10 +156,45 @@ a {
 }
 
 
+#password-strength-meter {
+  width: 100%;
+  height: 0.3em;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  /* Applicable only to Firefox */
+  background: none;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+#password-strength-meter::-webkit-meter-bar {
+  background: none;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+#password-strenth-meter::-webkit-meter-optimum-value {
+  border-radius: 0 0 0 3px;
+}
+#password-strength-meter::-moz-meter-bar {
+  border-radius: 0 0 0 3px;
+}
+
+/* Webkit based browsers */
+meter[value="1"]::-webkit-meter-optimum-value { background: #b71c1c; }
+meter[value="2"]::-webkit-meter-optimum-value { background: #EF6C00; }
+meter[value="3"]::-webkit-meter-optimum-value { background: #FDD835; }
+meter[value="4"]::-webkit-meter-optimum-value { background: #57ac47; border-radius: 0 0 3px 3px !important; }
+
+/* Gecko based browsers */
+meter[value="1"]::-moz-meter-bar { background: #b71c1c; }
+meter[value="2"]::-moz-meter-bar { background: #EF6C00; }
+meter[value="3"]::-moz-meter-bar { background: #FDD835; }
+meter[value="4"]::-moz-meter-bar { background: #57ac47; border-radius: 0 0 3px 3px !important; }
+
 .input-wrap {
   position: relative;
 }
-#password_icon {
+.pwd_ico {
   position: absolute;
   right: 8px;
   color: #b71c1c;
@@ -168,8 +203,8 @@ a {
   line-height: 34px;
 }
 
-#password_icon .tooltiptext {
-    width: 200px;
+.pwd_ico .tooltiptext {
+    width: 230px;
 
     visibility: hidden;
     background-color: #b71c1c;
@@ -183,9 +218,9 @@ a {
     z-index: 1;
     bottom: 100%;
     left: 50%;
-    margin-left: -100px;
+    margin-left: -115px;
 }
 
-#password_icon:hover .tooltiptext {
+.pwd_ico:hover .tooltiptext {
     visibility: visible;
 }
