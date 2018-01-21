@@ -43,7 +43,13 @@ $body-div: $light-7;
 $profile-bg: $light-9;
 $profile-top: $dark-1;
 
-$tag-colour: #ccc;
+$header-colour: $dark-1;
+$sidebar-colour: #141714;
+$bg-colour: #F9FAF9;
+$body-div: $dark-3;
+$tag-colour: $light-5;
+$sidebar-foreground: $light-4;
+$sidebar-icons: $dark-1;
 
 * {
   padding: 0;
@@ -56,6 +62,8 @@ $tag-colour: #ccc;
 
   /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
   font-family: "Open Sans", Arial, sans-serif;
+
+  transition: all 0.1s ease-in-out;
 }
 html, body {
   width: 100%;
@@ -120,7 +128,7 @@ html, body {
   display: flex;
   flex-direction: row;
 
-  box-shadow: 0px 0px 2px #000;
+  box-shadow: 0px -1px 3px #000;
 
   z-index: 10;
 }
@@ -197,6 +205,8 @@ html, body {
 
 /* TAG BAR */
 .tag-bar {
+  display: none;
+
   width: 100%;
   height:48px;
   background-color: $sidebar-colour;
@@ -213,16 +223,37 @@ html, body {
   color: $sidebar-foreground;
   vertical-align: middle;
   display: inline-block;
-  padding: 0 10px;
+  padding: 0 5px;
 }
 .tag {
-  margin: 0 4px;
-  height: 24px;
+  margin: 0 6px;
+  height: 22px;
+  line-height: 20px;
   vertical-align: middle;
   display: inline-block;
-  padding: 0 10px;
-  border-radius: 2px;
+  padding: 0 9px;
+  border-radius: 1.5px;
   background-color: $tag-colour;
+
+  box-shadow: 0px 2px 2px -2px #000;
+
+  position: relative;
+}
+.tag::after {
+  box-shadow: 0px 3px 4px -2px #000;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+.tag:hover::after {
+  opacity: 1;
 }
 
 /* SIDE BAR */
@@ -230,12 +261,13 @@ html, body {
   flex-grow: 1;
   width: 100%;
 
+  height: calc(100vh - 104px);
+
   display: flex;
   flex-direction: row;
 }
 .sidebar {
-  display: none;
-  width: 0;
+  width: 240px;
 
   height: 100%;
   /*width: 180px;*/
@@ -246,7 +278,7 @@ html, body {
   color: $sidebar-foreground;
   box-shadow: -1px 0px 2px #000;
 
-  height: calc(100vh - 56px);
+  height: 100%;
   overflow-y: auto;
 
   display: flex;
@@ -311,7 +343,7 @@ html, body {
 .body-content {
   flex-grow: 1;
 
-  height: calc(100vh - 56px);
+  height: calc(100vh - 104px);
   width: calc(100% - 256px);
   z-index: 0;
 
@@ -321,7 +353,7 @@ html, body {
   overflow-y: auto;
 }
 .video-group {
-  margin: 32px 96px;
+  margin: 24px 48px;
 }
 .group-title {
   font-size: 16px;
@@ -429,6 +461,7 @@ html, body {
 .view-count:after {  content: "30,000"; }
 .username:after {  content: "Author name here - But I'm an asshole so it's long"; }
 .email:after {  content: "ohffs@gmail.com"; }
+.profile-popout { display: none; }
 
 .skel {
   /*background-color: $skelly-colour;*/

@@ -6,14 +6,15 @@
   font-size: 14px;
   line-height: 1.5;
   /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
-  font-family: "Open Sans", Arial, sans-serif; }
+  font-family: "Open Sans", Arial, sans-serif;
+  transition: all 0.1s ease-in-out; }
 
 html, body {
   width: 100%;
   min-height: 100vh;
   color: #0b1206;
   word-wrap: break-word;
-  background-color: #f1f7eb; }
+  background-color: #F9FAF9; }
 
 .cursive {
   font-family: 'Pacifico', cursive; }
@@ -50,13 +51,13 @@ html, body {
 .header-bar {
   height: 56px;
   width: 100%;
-  background-color: #2e4819;
+  background-color: #69a239;
   color: #fff;
   font-size: 24px;
   padding: 0 16px;
   display: flex;
   flex-direction: row;
-  box-shadow: 0px 0px 2px #000;
+  box-shadow: 0px -1px 3px #000;
   z-index: 10; }
 
 #burger-logo {
@@ -115,9 +116,10 @@ html, body {
 
 /* TAG BAR */
 .tag-bar {
+  display: none;
   width: 100%;
   height: 48px;
-  background-color: #517e2c;
+  background-color: #141714;
   box-shadow: 0 1px 2px #000;
   z-index: 5;
   padding: 12px; }
@@ -127,38 +129,56 @@ html, body {
   height: 24px;
   font-size: 18px;
   line-height: 24px;
-  color: #e3f0d8;
+  color: #acd28c;
   vertical-align: middle;
   display: inline-block;
-  padding: 0 10px; }
+  padding: 0 5px; }
 
 .tag {
-  margin: 0 4px;
-  height: 24px;
+  margin: 0 6px;
+  height: 22px;
+  line-height: 20px;
   vertical-align: middle;
   display: inline-block;
-  padding: 0 10px;
-  border-radius: 2px;
-  background-color: #ccc; }
+  padding: 0 9px;
+  border-radius: 1.5px;
+  background-color: #bada9f;
+  box-shadow: 0px 2px 2px -2px #000;
+  position: relative; }
+
+.tag::after {
+  box-shadow: 0px 3px 4px -2px #000;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0; }
+
+.tag:hover::after {
+  opacity: 1; }
 
 /* SIDE BAR */
 .body {
   flex-grow: 1;
   width: 100%;
+  height: calc(100vh - 104px);
   display: flex;
   flex-direction: row; }
 
 .sidebar {
-  display: none;
-  width: 0;
+  width: 240px;
   height: 100%;
   /*width: 180px;*/
   padding: 5px 0;
   z-index: 5;
-  background-color: #517e2c;
-  color: #e3f0d8;
+  background-color: #141714;
+  color: #acd28c;
   box-shadow: -1px 0px 2px #000;
-  height: calc(100vh - 56px);
+  height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column; }
@@ -174,13 +194,13 @@ html, body {
   background-color: rgba(0, 0, 0, 0.08) !important; }
 
 .sidebar-item.active .fa {
-  color: #c7e1b2; }
+  color: #69a239; }
 
 .sidebar-item.active .sb-it {
   font-weight: 800; }
 
 .sidebar-item .fa {
-  color: #c7e1b2;
+  color: #69a239;
   margin-right: 12px;
   font-size: 16px;
   margin-top: 0px;
@@ -216,7 +236,7 @@ html, body {
 /* MAIN CONTENT */
 .body-content {
   flex-grow: 1;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 104px);
   width: calc(100% - 256px);
   z-index: 0;
   display: flex;
@@ -224,7 +244,7 @@ html, body {
   overflow-y: auto; }
 
 .video-group {
-  margin: 32px 96px; }
+  margin: 24px 48px; }
 
 .group-title {
   font-size: 16px;
@@ -240,7 +260,7 @@ html, body {
 .bd-div {
   margin: -24px 128px 0 128px;
   min-height: 1px;
-  background-color: #d5e8c5; }
+  background-color: #517e2c; }
 
 .video-row {
   display: flex;
@@ -287,7 +307,7 @@ html, body {
   position: absolute;
   left: 0;
   top: 0;
-  background: linear-gradient(to right, transparent 80%, #f1f7eb); }
+  background: linear-gradient(to right, transparent 80%, #F9FAF9); }
 
 .video-subtext {
   display: flex;
@@ -327,6 +347,9 @@ html, body {
 
 .email:after {
   content: "ohffs@gmail.com"; }
+
+.profile-popout {
+  display: none; }
 
 .skel {
   /*background-color: $skelly-colour;*/
