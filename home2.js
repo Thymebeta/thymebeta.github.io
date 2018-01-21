@@ -38,8 +38,8 @@ function request_row(key, items, offset) {
   // Request row data from the b/e
   let cards = [];
   for (i=0; i<items; i++) {
-    let w = Math.floor(Math.random() * 500 + 500);
-    let h = Math.floor(Math.random() * 500 + 500);
+    let w = Math.floor(Math.random() * 50 + 50);
+    let h = Math.floor(Math.random() * 30 + 30);
 //    w = key * 100;
     let type = key % 2 == 0 ? 'animals' : 'tech'
     let img = `//placeimg.com/${w}/${h}/${type}`;
