@@ -175,7 +175,8 @@ html, body {
   box-shadow: 0 0 2px #000;
   margin: 8px;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  opacity: 0; }
 
 .video-meta {
   width: 100%;
