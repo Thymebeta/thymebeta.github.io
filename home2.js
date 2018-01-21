@@ -69,10 +69,10 @@ function load_row(row_id) {
                          .replace('{featured}', '')
                          .replace('{c-id}',     c_id));
 
-        row_elem.animate({'opacity': '0'}, 400, function () {
+        row_elem.animate({'opacity': '0'}, 0, function () {
           row_elem.replaceWith($row);
           $('#' + c_id).replaceWith(cards);
-          $row.animate({'opacity': '1'}, 200);
+          $row.animate({'opacity': '1'}, 0);
         });
       }
     });
