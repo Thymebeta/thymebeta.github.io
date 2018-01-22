@@ -7,7 +7,8 @@ var VCARD = `<div class="video-card">
   <div class="video-meta m-sub">
     <div class="video-views">{views} loops</div>
   </div>
-  <div class="video-thumb" style="background-image: url('{thumb}')"></div>
+  <div class="video-thumb-p" style="background-image: url('{thumb}')"></div>
+  <div class="video-thumb" style="display:none"></div>
 </div>
 `;
 var VCARD_SKEL = `
@@ -38,12 +39,14 @@ function request_row(key, items, offset) {
   // Request row data from the b/e
   let cards = [];
   for (i=0; i<items; i++) {
-    let w = Math.floor(Math.random() * 50 + 50);
-    let h = Math.floor(Math.random() * 30 + 30);
+    let w = Math.floor(Math.random() * 20 + 950);
+    let h = Math.floor(Math.random() * 20 + 530);
 //    w = key * 100;
-    let type = key % 2 == 0 ? 'animals' : 'tech'
-    let img = `//placeimg.com/${w}/${h}/${type}`;
-    cards.push({'title': 'Title', 'author': 'Author', 'views': 'Views', 'id': '---', 'thumb': img});
+    let type = key % 2 == 0 ? 'animals' : 'tech';
+    let img2 = `//placeimg.com/${w}/${h}/${type}`;
+    console.log(img2);
+    let img  = `//placeimg.com/48/27/${type}`;
+    cards.push({'title': 'Stock Images', 'author': type, 'views': '0', 'id': '---', 'thumb': img, 'fullres': img2});
   }
   return cards;
 }
@@ -67,9 +70,7 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
       let parent = $(this);
       let rd = row_dat[i];
       let c_num = i;
-      $('<img/>').attr('src', url).on('load', function() {
-        $(this).remove();
-
+      img.onload = function () {
         let t_id = randId();
         let $c = $(VCARD.replace('{title}',  rd['title'])
                         .replace('{author}', rd['author'])
@@ -90,15 +91,22 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
                            .replace('{featured}', is_featured ? FEATURED_CLASS : '')
                            .replace('{r-id}',     r_id)
                            .replace('{c-id}',     c_id));
-          row_elem.animate({'opacity': '0'}, 100, function () {
-            row_elem.replaceWith($row);
-            $('#' + c_id).parent().replaceWith(row_elem.children('.video-row').first());
-            $row.animate({'opacity': '1'}, 200);
-          });
+
+          row_elem.css('opacity', '0');
+          $row.css('opacity', '1');
 
           $new_row = row_elem.children('.video-row').first();
           $new_row.removeClass('skel');
           $new_row.css('opacity', '1');
+
+          row_elem.replaceWith($row);
+          $('#' + c_id).parent().replaceWith(row_elem.children('.video-row').first());
+
+          //row_elem.animate({'opacity': '0'}, 2, function () {
+          //  row_elem.replaceWith($row);
+          //  $('#' + c_id).parent().replaceWith(row_elem.children('.video-row').first());
+          //  $row.animate({'opacity': '1'}, 0);
+          //});
         }
 
         let $card = $new_row.children('.video-card').eq(c_num).first();
@@ -106,11 +114,21 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
           $c.hide();
           $card.replaceWith($c);
         } else {
-          $card.animate({'opacity': '0'}, 100, function () {
-            $card.replaceWith($c);
-            $c.animate({'opacity': '1'}, 200);
-          });
+          $card.replaceWith($c);
+          $c.css('opacity', '1');
+          //$card.animate({'opacity': '0'}, 100, function () {
+          //  $c.animate({'opacity': '1'}, 200);
+          //});
         }
+
+        let ni = new Image();
+        ni.onload = function() {
+          $(this).remove();
+          $c.children('.video-thumb').first().show();
+          $c.children('.video-thumb').first().css('background-image', 'url("' + rd['fullres'] + '")');
+          $c.children('.video-thumb').first().css('opacity', '1');
+        };
+        ni.src = rd['fullres'];
 
         /*
         if (loaded == count) {
@@ -126,7 +144,8 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
             $row.animate({'opacity': '1'}, 50);
           });
         }*/
-      });
+      };
+      img.src = url;
     }
   })(null, [], [], 0, false, null);
 }
@@ -161,7 +180,7 @@ function add_row(num) {
 }
 
 $().ready(function () {
-  for (let i=0; i<50; i++) {
+  for (let i=0; i<10; i++) {
     setTimeout(function(){add_row(i);}, 0);
   }
 });
