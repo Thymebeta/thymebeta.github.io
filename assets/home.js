@@ -24,9 +24,9 @@ var VROW = `<div class="row-header">{title}<span class="sub-heading">{sub}</span
 `;
 var VROW_SKEL = `<span id="{id}"><div class="row-header skel"><span class="sub-heading"></span></div>
 <div class="video-row skel{featured}">
-  <div class="vbtn vbt-l skel"><i class="fa fa-chevron-left"></i></div>
+  <div class="vbtn vbt-l"><i class="fa fa-chevron-left"></i></div>
   <div id="{c-id}"></div>
-  <div class="vbtn vbt-r skel"><i class="fa fa-chevron-right"></i></div>
+  <div class="vbtn vbt-r"><i class="fa fa-chevron-right"></i></div>
 </div><span>
 `;
 
@@ -44,7 +44,6 @@ function request_row(key, items, offset) {
 //    w = key * 100;
     let type = key % 2 == 0 ? 'animals' : 'tech';
     let img2 = `//placeimg.com/${w}/${h}/${type}`;
-    console.log(img2);
     let img  = `//placeimg.com/48/27/${type}`;
     cards.push({'title': 'Stock Images', 'author': type, 'views': '0', 'id': '---', 'thumb': img, 'fullres': img2});
   }
@@ -101,12 +100,6 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
 
           row_elem.replaceWith($row);
           $('#' + c_id).parent().replaceWith(row_elem.children('.video-row').first());
-
-          //row_elem.animate({'opacity': '0'}, 2, function () {
-          //  row_elem.replaceWith($row);
-          //  $('#' + c_id).parent().replaceWith(row_elem.children('.video-row').first());
-          //  $row.animate({'opacity': '1'}, 0);
-          //});
         }
 
         let $card = $new_row.children('.video-card').eq(c_num).first();
@@ -116,19 +109,28 @@ function load_row(row_elem, title, sub, is_featured, key, count, displayed_count
         } else {
           $card.replaceWith($c);
           $c.css('opacity', '1');
-          //$card.animate({'opacity': '0'}, 100, function () {
-          //  $c.animate({'opacity': '1'}, 200);
-          //});
         }
 
-        let ni = new Image();
-        ni.onload = function() {
-          $(this).remove();
-          $c.children('.video-thumb').first().show();
-          $c.children('.video-thumb').first().css('background-image', 'url("' + rd['fullres'] + '")');
-          $c.children('.video-thumb').first().css('opacity', '1');
-        };
-        ni.src = rd['fullres'];
+        if (c_num < displayed_count) {
+          // Load in the full-res
+          $('<img />').attr('src', rd['fullres']).appendTo('body').hide().on('load', function () {
+            console.log('derp');
+
+            $(this).remove();
+            $c.children('.video-thumb').first().show();
+            $c.children('.video-thumb').first().css('background-image', 'url("' + rd['fullres'] + '")');
+            $c.children('.video-thumb').first().css('opacity', '1');
+          });
+          /*
+          let ni = new Image();
+          ni.onload = function() {
+            $(this).remove();
+            $c.children('.video-thumb').first().show();
+            $c.children('.video-thumb').first().css('background-image', 'url("' + rd['fullres'] + '")');
+            $c.children('.video-thumb').first().css('opacity', '1');
+          };
+          ni.src = rd['fullres'];*/
+        }
 
         /*
         if (loaded == count) {
@@ -180,7 +182,7 @@ function add_row(num) {
 }
 
 $().ready(function () {
-  for (let i=0; i<10; i++) {
+  for (let i=0; i<5; i++) {
     setTimeout(function(){add_row(i);}, 0);
   }
 });

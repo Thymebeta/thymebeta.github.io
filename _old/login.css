@@ -13,22 +13,15 @@ html, body {
   width: 100%;
   min-height: 100vh;
 
-  background-color: #97c260;
+  background-color: #fff;
   color: #24292e;
 
   word-wrap: break-word;
-
 /*
-  background-image: url('https://gist.githubusercontent.com/brettlangdon/85942af486eb79118467/raw/2a7409cd3c26a90b2e82bdc40dc7db18b92b3517/LbjXkjc.jpg');
-  background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: cover;
-*/
-
   background-image: url("https://gist.githubusercontent.com/brettlangdon/85942af486eb79118467/raw/2a7409cd3c26a90b2e82bdc40dc7db18b92b3517/blurred-rainbow-wallpaper-for-1920x1080-63-817.jpg");
   background-size: cover;
   background-attachment: fixed;
-  background-position: center;
+  background-position: center;*/
 }
 
 .cursive {
@@ -36,13 +29,13 @@ html, body {
 }
 
 #login {
-  width: 340px;
+  width: 40%;
   margin: 0 auto;
   padding-right: 16px !important;
   padding-left: 16px !important;
 
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -54,7 +47,6 @@ html, body {
   text-shadow: none;
   background-color: transparent;
   border: 0;
-  border-radius: 3px 3px 0 0;
   padding: 0 !important;
 } .form-header * {
   font-size: 36px;
@@ -64,10 +56,9 @@ html, body {
 
 .form-body {
   border-top: 1px solid #d8dee2;
-  border-radius: 5px;
   padding: 20px;
   font-size: 14px;
-  background-color: #fff;
+  background-color: #69a239;
   border: 1px solid #d8dee2;
   margin-top: 16px !important;
 }
@@ -91,10 +82,8 @@ input {
   width: 100%;
   text-align: center;
 
-  color: #fff;
-  background-color: #28a745;
-  background-color: #75b540;
-  /*background-image: linear-gradient(-180deg, #34d058 0%, #28a745 90%);*/
+  color: #0b1206;
+  background-color: #90c366;
 
   margin-top: 5px;
 
@@ -115,7 +104,6 @@ input {
   background-position: -1px -1px;
   background-size: 110% 110%;
   border: 1px solid rgba(27,31,35,0.2);
-  border-radius: 0.25em;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -134,18 +122,16 @@ input {
   vertical-align: middle;
   background-color: #fff;
   border: 1px solid #d1d5da;
-  border-radius: 3px;
 }
 
 a {
-  color: #57ac47;
+  color: #69a239;
   text-decoration: none;
 }
 .call-to-action {
   padding: 15px 20px;
   text-align: center;
   border: 1px solid #d8dee2;
-  border-radius: 5px;
   margin: 16px 0 10px 0;
   background-color: #fff;
 }
