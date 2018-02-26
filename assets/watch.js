@@ -39,10 +39,88 @@ $().ready(function () {
   var $buffer = $(".c-sb-buff");
   var $handle = $(".c-sb-handle");
   var $timestamp = $("#timestamp");
+  var $playpause = $("#play-pause-btn");
+  var $fullscreen = $("#fs-btn");
+  var timeoutt
+
+  function play(e) {
+    $video.trigger('play');
+    var i = $playpause.children().first();
+    i.removeClass('fa-play');
+    i.addClass('fa-pause');
+    e.stopImmediatePropagation();
+  }
+  function pause(e) {
+    $video.trigger('pause');
+    var i = $playpause.children().first();
+    i.removeClass('fa-pause');
+    i.addClass('fa-play');
+    e.stopImmediatePropagation();
+  }
+  function toggle_fs(e) {
+    var elem = $video.parent().get(0);
+
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    ) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    } else {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    }
+
+    e.stopImmediatePropagation();
+  }
+
+  $video.parent().on('click touchstart', function(e) {
+    $video.get(0).paused ? play(e) : pause(e);
+  });
+  $playpause.on('click touchstart', function(e) {
+    $video.get(0).paused ? play(e) : pause(e);
+  });
+  $fullscreen.on('click touchstart', toggle_fs);
+  $(".inner-controls").on('click touchstart', function(e) {
+    e.stopImmediatePropagation();
+  });
+
+  function hideControls() {
+    if (!$video.get(0).paused) {
+      $(".video-controls").css("opacity", "0");
+    }
+  }
+
+  $(".video-controls").hover(function(){
+    $(this).css('opacity', '1');
+  }, hideControls);
+
+  function resetTimer() {
+    $(".video-controls").css("opacity", "1");
+    clearTimeout(timeoutt);
+    timeoutt = setTimeout(hideControls, 3000);
+  }
+  $(".video-area").on('mousemove click', resetTimer);
 
   $video.bind("timeupdate", videoTimeUpdateHandler);
   $bar.bind("mousemove", barMouseMoveHandler);
-  $bar.bind("mousedown", barMouseDownHandler);
+  $bar.bind("touch click", barMouseDownHandler);
 
   var vid = document.getElementById("main-video");
   if (vid.addEventListener) {
@@ -64,6 +142,8 @@ $().ready(function () {
       var percent = x / $this.width();
       updateProgressWidth(percent);
       updateVideoTime(percent);
+
+      e.stopImmediatePropagation();
   }
   function barMouseMoveHandler(e) {
       var $this = $(this);
@@ -75,8 +155,8 @@ $().ready(function () {
   function updateScrubberWidth(percent) {
       $scrubber.width((percent * 100) + "%");
   }
-  function updateBufferWidth(percent) {
-      $buffer.width((percent * 100) + "%");
+  function updateBufferWidth(end, percent) {
+      $buffer.css({'left': (end * 100) + "%", 'width': (percent * 100) + "%"});
   }
   function updateProgressWidth(percent) {
       $progress.width((percent * 100) + "%");
@@ -91,7 +171,16 @@ $().ready(function () {
   function updateLoop() {
     var video = $video.get(0);
     var percent = video.buffered.end(0) / video.duration;
-    updateBufferWidth(percent);
+
+    var time = video.currentTime;
+    var range = 0;
+    var bf = video.buffered;
+    while(!(bf.start(range) <= time && time <= bf.end(range))) {
+        range += 1;
+    }
+    var start = bf.start(range) / video.duration;
+    var end = bf.end(range) / video.duration;
+    updateBufferWidth(start, end - start);
     $timestamp.text(formatTimestamp(video.currentTime, video.duration));
   }
   setInterval(updateLoop, 50)
