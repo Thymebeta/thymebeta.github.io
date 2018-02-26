@@ -10,38 +10,112 @@
   height: 100%;
   background-color: #191C17; }
 
+.fb {
+  display: flex;
+  flex-direction: row; }
+
+.sh {
+  flex-shrink: 0; }
+
+.fg {
+  flex-grow: 1; }
+
+.rld {
+  border-bottom: 1px solid #cbd9bd; }
+
+.pfp {
+  border-radius: 50%;
+  background-size: cover;
+  width: 48px;
+  height: 48px;
+  margin: 4px;
+  box-shadow: -1px 2px 2px #000;
+  background-color: #75b540;
+  background-position: center; }
+
+.pfp-ni {
+  color: #fff;
+  font-size: 24px;
+  padding-right: 4px;
+  text-align: center;
+  line-height: 48px; }
+
+#author-pfp {
+  background-image: url("https://peach.blender.org/wp-content/uploads/watchtrailer.gif?x11217"); }
+
+#author-info {
+  width: 100%;
+  height: 56px;
+  font-size: 16px;
+  display: table-cell;
+  vertical-align: middle; }
+
+#a-name {
+  font-weight: 800; }
+
+#a-folls {
+  color: #555; }
+
+.sh-mre {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #555;
+  display: block;
+  cursor: pointer;
+  user-select: none;
+  -moz-user-select: none; }
+
 .page-body {
   flex-grow: 1;
-  padding: 8px 32px;
+  padding: 16px 32px;
   display: flex;
   flex-direction: column; }
 
 .heading {
   width: 100%;
-  padding-bottom: 5px; }
+  padding-bottom: 5px;
+  margin-bottom: 3px; }
 
 #title {
-  width: 100%;
-  line-height: 46px;
-  font-size: 38px; }
+  line-height: 24px;
+  font-size: 24px;
+  padding: 6px 0;
+  font-weight: 800; }
 
 #tags {
   width: 100%;
   font-size: 0; }
 
+#stats {
+  height: 26px;
+  line-height: 36px;
+  text-align: right;
+  font-size: 18px;
+  position: relative;
+  color: #444; }
+
+.rule {
+  width: 100%;
+  height: 1px;
+  background-color: #cbd9bd;
+  position: absolute;
+  bottom: -2px;
+  left: 0; }
+
 #tags > * {
-  height: 28px;
-  float: left;
+  height: 20px;
+  display: inline-block;
   margin: 3px 3px;
   padding: 0 5px;
-  line-height: 28px;
-  font-size: 14px; }
+  line-height: 20px;
+  font-size: 12px; }
 
 .tag {
-  box-shadow: 0 0 1px #000;
+  box-shadow: 0 0 2px #000;
   border-radius: 5px;
   background-color: #fff;
-  color: #1F4600; }
+  color: #1F4600;
+  width: auto; }
 
 #tags-sub {
   color: #808080;
@@ -51,9 +125,9 @@
   flex-grow: 1; }
 
 .video-area {
-  width: 75%;
+  width: 100%;
   height: 0;
-  padding-bottom: 42.2%;
+  padding-bottom: 56.25%;
   background-color: #000;
   float: left;
   position: relative; }
@@ -67,8 +141,7 @@
 
 .next-thumb {
   width: 100%;
-  height: 0;
-  padding-bottom: 56.25%;
+  height: 128px;
   background-color: #eee;
   margin-bottom: 16px;
   position: relative; }
@@ -83,6 +156,62 @@
   left: 50%;
   transform: translate(-50%, -50%); }
 
+.info-box {
+  width: 100%;
+  float: left;
+  padding-bottom: 8px; }
+
+.sub-video {
+  width: 100%; }
+
+#comments {
+  width: 75%;
+  float: left; }
+
+.vid-sect {
+  width: 75%;
+  float: left; }
+
+.comment {
+  margin: 12px; }
+
+.comment > .pfp {
+  margin: 4px 16px; }
+
+.cmt-ath {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 3px; }
+
+.cmt-dt {
+  padding: 3px; }
+
+@media screen and (max-width: 900px) {
+  .vid-sect {
+    width: 100%; }
+
+  .watch-next {
+    width: 100%;
+    padding: 0;
+    font-size: 0;
+    min-height: auto;
+    height: auto; }
+
+  .next-thumb {
+    width: 100%;
+    height: 96px;
+    margin: 4px 0;
+    padding: 0;
+    display: inline-block; }
+
+  #comments {
+    width: 100%; }
+
+  .sidebar-left {
+    width: 0; }
+
+  .page-body {
+    padding: 8px; } }
 /* VIDEO VIEWER */
 .video-container {
   top: 0;
@@ -200,7 +329,6 @@
   background-color: #75b540;
   position: absolute;
   bottom: 1.5px;
-  transform: translateX(-50%);
   z-index: 10; }
 
 :focus {

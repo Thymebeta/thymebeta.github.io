@@ -39,38 +39,58 @@
         <div class="central-body" id="body-content">
           <div class="sidebar-left"></div>
           <div class="page-body">
-            <div class="heading">
-              <div id="title">Big Buck Bunny</div>
-              <div id="tags">
-                <div class="tag">Free Download</div>
-                <div class="tag">1080p</div>
-                <div class="tag">Animation</div>
-                <div class="tag">Long</div>
-                <div class="tag">Peach OMP</div>
-                <div id="tags-sub"><u>Sign in</u> to suggest tags</div>
-              </div>
-            </div>
             <div class="mid-section">
-              <div class="video-area">
-                <video class="video-stream" id="main-video" autoplay="">
-                  <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                </video>
-                <div class="video-controls" id="scrub-controls">
-                  <div class="c-seek-bar">
-                    <div class="c-sb-bg"></div>
-                    <div class="c-sb-handle"></div>
-                    <div class="c-sb-prog"></div>
-                    <div class="c-sb-scrub"></div>
-                    <div class="c-sb-buff"></div>
+              <div class="vid-sect">
+                <div class="video-area">
+                  <video class="video-stream" id="main-video" autoplay="">
+                    <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-controls" id="scrub-controls">
+                    <div class="c-seek-bar">
+                      <div class="c-sb-bg"></div>
+                      <div class="c-sb-handle"></div>
+                      <div class="c-sb-prog"></div>
+                      <div class="c-sb-scrub"></div>
+                      <div class="c-sb-buff"></div>
+                    </div>
+                    <div class="inner-controls">
+                      <button type="button" id="play-pause-btn" class="c-play-pause"><i class="fa fa-fw fa-pause" aria-hidden="true"></i></button>
+                      <div id="timestamp">00:00 / 00:00</div>
+                      <div class="expand"></div>
+                      <button type="button" class="c-volume"><i class="fa fa-fw fa-volume-up" aria-hidden="true"></i></button>
+                      <!--
+                      <input type="range" class="c-volume-bar" min="0" max="1" step="0.1" value="1">-->
+                      <button type="button" id="fs-btn" class="c-full-screen"><i class="fa fa-fw fa-arrows-alt" aria-hidden="true"></i></button>
+                    </div>
                   </div>
-                  <div class="inner-controls">
-                    <button type="button" id="play-pause-btn" class="c-play-pause"><i class="fa fa-fw fa-pause" aria-hidden="true"></i></button>
-                    <div id="timestamp">00:00 / 00:00</div>
-                    <div class="expand"></div>
-                    <button type="button" class="c-volume"><i class="fa fa-fw fa-volume-up" aria-hidden="true"></i></button>
-                    <!--
-                    <input type="range" class="c-volume-bar" min="0" max="1" step="0.1" value="1">-->
-                    <button type="button" id="fs-btn" class="c-full-screen"><i class="fa fa-fw fa-arrows-alt" aria-hidden="true"></i></button>
+                </div>
+                <div class="info-box rld">
+                  <div class="heading rld">
+                    <div class="fb">
+                      <div id="title" class="fg">Peach open movie project - Big Buck Bunny</div>
+                      <div id="stats" class="fs">
+                        1,000,000 views
+                        <div class="rule"></div>
+                      </div>
+                    </div>
+                    <div id="tags">
+                      <div class="tag">Free Download</div>
+                      <div class="tag">1080p</div>
+                      <div class="tag">Animation</div>
+                      <div class="tag">Long</div>
+                      <div class="tag">Peach OMP</div>
+                      <div id="tags-sub"><u>Sign in</u> to suggest tags</div>
+                    </div>
+                  </div>
+                  <div class="sub-video fb">
+                    <div class="fs">
+                      <div class="pfp" id="author-pfp"></div>
+                    </div>
+                    <div class="fg" id="description">
+                      <div id="author-info"><div id="a-name">Peach open movie project</div><div id="a-folls">100 followers</div></div>
+                      The results of the Peach open movie project has been licensed under the Creative Commons Attribution 3.0 license. This includes all the data we’ve published online and on the DVDs, and all of the contents on this website. If any content on this site is not licensed as such, it will be clearly indicated.<br><br>In short, this means you can freely reuse and distribute this content, also commercially, for as long you provide a proper attribution.
+                      <a class="sh-mre">SHOW MORE</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -78,6 +98,16 @@
                 <div class="next-thumb"></div>
                 <div class="next-thumb"></div>
                 <div class="next-thumb"></div>
+                <div class="next-thumb"></div>
+              </div>
+              <div id="comments">
+                <div class="comment fb">
+                  <div class="fs pfp pfp-ni cursive">T</div>
+                  <div>
+                    <div class="cmt-ath rld">Thyme</div>
+                    <div class="cmt-dt">Commenting is a work-in-progress and will be available soon. Thank you for your patience.</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
