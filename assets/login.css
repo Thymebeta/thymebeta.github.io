@@ -2,7 +2,8 @@
   box-sizing: border-box; }
 
 html, body {
-  background-color: #233613; }
+  background-color: #233613;
+  -webkit-text-size-adjust: none; }
 
 .page-content {
   width: 100%;
