@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box; }
+
+body, html {
+  background-color: #233613; }
+
+.central-column {
+  width: 100%;
+  max-width: 750px;
+  min-height: 100%;
+  margin: 0 auto; }
+
+.video-info {
+  font-size: 14px; }
+
+.video-info > * {
+  margin: 4px; }
+
+.pane-video-card {
+  margin: 20px 0 20px;
+  background-color: #fff;
+  padding: 20px;
+  width: 100%; }
+
+.card-video-sec {
+  background-color: #000;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; }
+
+.comments-tog {
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  display: block;
+  user-select: none;
+  -moz-user-select: none; }
+
+.pfp {
+  border-radius: 50%;
+  background-size: cover;
+  width: 38px;
+  height: 38px;
+  box-shadow: -1px 2px 2px #000;
+  background-color: #75b540;
+  background-position: center; }
+
+.title, .author, .views {
+  margin: 3px 0; }
+
+.author {
+  border-top: 1px solid #75b540;
+  padding-right: 10px; }
+
+.views {
+  border-top: 1px solid #75b540; }
+
+.title {
+  font-weight: bold; }
+
+.comment {
+  border-bottom: 2px solid #d0e6c3;
+  padding: 5px 2px 1px 5px;
+  font-size: 14px; }
+
+.comment.child {
+  margin-top: 5px;
+  margin-left: 15px;
+  border-left: 1px dotted #d0e6c3; }
+
+.cmt-ath {
+  font-size: 10px;
+  cursor: pointer; }
+
+.cmt-ath:hover {
+  text-decoration: underline; }
+
+.cmt-time {
+  font-size: 10px;
+  color: #888; }
+
+.cmt-dt {
+  padding: 5px; }
+
+.cmt-act > * {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 10px;
+  color: #888; }
+
+.cmt-act > *:hover {
+  text-decoration: underline; }
+
+.show-full {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  height: 32px;
+  font-size: 14px;
+  color: #818c79;
+  border: 2px solid #d0e6c3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+  margin: 5px auto; }
+
+.show-full:hover {
+  background-color: #d0e6c3;
+  color: #2f332c; }
+
+/* Generics */
+.ctr-x {
+  justify-content: center; }
+
+.ctr-y {
+  align-items: center; }
+
+.fc {
+  display: flex;
+  flex-direction: column; }
+
+.fb {
+  display: flex;
+  flex-direction: row; }
+
+.fs {
+  flex-shrink: 0; }
+
+.fg {
+  flex-grow: 1; }
+
+.flt-r {
+  float: right; }
+
+.flh {
+  height: 100%; }
+
+.flt-l {
+  float: left; }
+
+.flw {
+  width: 100%; }
+
+.skel {
+  background-color: #e6e6e6; }
+
+/*# sourceMappingURL=home.css.map */
