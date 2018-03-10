@@ -83,7 +83,7 @@ $().ready(function() {
   $(".comment-tog").text("SHOW COMMENTS");
   $(".comments").hide();
 
-  $("div").on("click touchstart", ".comments-tog", function() {
+  $("div").on("pointerdown", ".comments-tog", function() {
     var $cblock = $(this).parent().children(".comments").first();
     if ($cblock.is(":visible")) {
       $cblock.hide();
@@ -93,7 +93,7 @@ $().ready(function() {
       $(this).text("HIDE COMMENTS");
     }
   });
-  $("div").on("click touchstart", ".mini-show-more", function() {
+  $("div").on("pointerdown", ".mini-show-more", function() {
     var $dblock = $(this).parent().parent().children(".description").first().children(".more").first();
     if ($dblock.is(":visible")) {
       $dblock.hide();
@@ -172,25 +172,30 @@ $().ready(function() {
     e.stopImmediatePropagation();
   }
 
-  $('div').on('click touchstart', '.card-video-sec', function(e) {
+  $('div').on('pointerdown', '.card-video-sec', function(e) {
     var $video = $(e.target).parent().children('video').first();
     $video.get(0).paused ? play(e) : pause(e);
   });
-  $('div').on('click touchstart', '.c-play-pause', function(e) {
+  $('div').on('pointerdown', '.c-play-pause', function(e) {
     var $video = $(e.target).parent().parent().parent().children('video').first();
     e.target = $(e.target).parent().parent();
     $video.get(0).paused ? play(e) : pause(e);
   });
-  $("div").on("click touchstart", ".c-full-screen", toggle_fs);
-  $("div").on('click touchstart', ".inner-controls", function(e) {
+  $("div").on("pointerdown", ".c-full-screen", toggle_fs);
+  $("div").on('pointerdown', ".inner-controls", function(e) {
     e.stopImmediatePropagation();
   });
 
   function hideControls() {
+    var ot = this;
+    $("video").each(function() {
+//      var video = this
+
+      if (this.currentTime == 0 | !this.paused) {
+        $(ot).css("opacity", "0");
+      }
+    })
     var video = $(this).parent().children('video').first().get(0);
-    if (video.currentTime == 0 | !video.paused) {
-      $(this).css("opacity", "0");
-    }
   }
   $(".video-controls").hover(function(){
     $(this).css('opacity', '1');
@@ -202,9 +207,9 @@ $().ready(function() {
     clearTimeout(timeoutt);
     timeoutt = setTimeout(hideControls, 3000);
   }
-  $("div").on('mousemove click', ".video-area", resetTimer);
+  $("div").on('pointerdown pointermove', ".video-area", resetTimer);
 
-  $("div").on("touch click", ".c-seek-bar", barMouseDownHandler)
+  $("div").on("pointerdown", ".c-seek-bar", barMouseDownHandler)
 
   function barMouseDownHandler(e) {
     var $this = $(this);
@@ -242,7 +247,7 @@ $().ready(function() {
   }
 
   $("video").on("timeupdate", videoTimeUpdateHandler)
-  $("div").on("mousemove", ".c-seek-bar", barMouseMoveHandler)
+  $("div").on("pointermove", ".c-seek-bar", barMouseMoveHandler)
 
   function updateLoop() {
     $("video").each(function() {
