@@ -23,13 +23,13 @@ $light-10: #ffffff;
 $fg-colour: $dark-9;
 $bg-colour: #FFFFFF;
 
-$header-colour: #557C35;
-$header-fg: #fff;
-$header-links: #d7e8ca;
+$header-colour: /*#557C35*/ $dark-5;
+$header-fg: $light-9;
+$header-links: $light-7;
 $search-border: #daded8;
-$nav-button: #6da441;
+$nav-button: /*#6da441*/ $dark-4;
 
-$caption-colour: #0E9BD8;
+$caption-colour: /*#0E9BD8*/ $dark-6;
 $caption-fg: #fff;
 
 $footer-colour: #191C17;
@@ -105,6 +105,13 @@ html, body {
   vertical-align: middle;
   color: $header-links;
   font-size: 14px;
+  user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+}
+.nav-link:hover {
+  text-decoration: underline;
+  color: $header-fg;
 }
 .search-pad {
   max-width: 400px;
@@ -144,10 +151,18 @@ html, body {
   height: 100%;
   margin-right: 10px;
   background-color: $nav-button;
-  border: 1px solid transparent;
   color: #fff;
   font-size: 12px;
-  padding: 4px 8px;
+  padding: 0 8px;
+  line-height: 28px;
+  user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.nav-button:hover {
+  background-color: lighten($nav-button, 2);
+  border: 1px solid lighten($nav-button, 2);
 }
 .btn-txt {
   font-size: 12px;
@@ -398,3 +413,17 @@ html, body {
 
   background-color: $footer-colour;
 }
+
+/* Generics */
+.ctr-x {justify-content: center;}
+.ctr-y {align-items: center;}
+.fc    {display: flex; flex-direction: column;}
+.fb    {display: flex; flex-direction: row;}
+.fs    {flex-shrink: 0;}
+.fg    {flex-grow: 1;}
+.flt-r {float: right;}
+.flh   {height: 100%;}
+.flt-l {float: left;}
+.flw   {width: 100%;}
+
+.skel  {background-color: #e6e6e6; background-image: none; box-shadow: none; border: none;}
