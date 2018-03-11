@@ -39,6 +39,43 @@ html, body {
   background-color: #3a5a20;
   display: flex; }
 
+.header-bar-mob {
+  height: 50px;
+  width: 100%;
+  background-color: #3a5a20;
+  display: table !important;
+  table-layout: fixed;
+  z-index: 5; }
+
+.header-bar-mob > * {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+  text-align: center;
+  color: #d5e8c5;
+  font-size: 25px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.1s ease; }
+
+.header-bar-mob > *:hover, .header-bar-mob > *.active {
+  color: #f1f7eb;
+  background-color: #35521d; }
+
+.search-bar {
+  height: 50px;
+  background-color: #446925;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  transition: top 0.2s ease-in; }
+
+#search-grow {
+  height: 0;
+  transition: height 0.2s ease-in; }
+
 .header-logo {
   padding: 8px 15px;
   font-size: 26px;
@@ -69,6 +106,33 @@ html, body {
   max-width: 400px;
   flex-grow: 1;
   padding: 10px 10px; }
+
+.search-pad-mob {
+  padding: 5px;
+  width: 100%;
+  height: 100%; }
+
+.search-mob {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+
+.search-mob > input {
+  height: 100%;
+  width: 100%;
+  padding: 5px 10px 5px 40px;
+  border: 1px solid #daded8;
+  font-size: 15px; }
+
+.search-mob > .fa {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 0;
+  top: -1px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 18px; }
 
 .search {
   width: 100%;
@@ -335,6 +399,12 @@ html, body {
   background-color: #191C17; }
 
 /* Generics */
+@media only screen and (max-width: 600px), only screen and (max-height: 600px) {
+  .nomobile {
+    display: none !important; } }
+@media only screen and (min-width: 601px) and (min-height: 601px) {
+  .mobile {
+    display: none !important; } }
 .ctr-x {
   justify-content: center; }
 

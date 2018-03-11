@@ -44,12 +44,6 @@ body, html {
 .description>.more>p {
   margin: 2px 0;
 }
-@media (max-width: 800px) {
-  .pane-video-card {
-    border-radius: 0;
-    box-shadow: 0 1px 2px #000;
-  }
-}
 .card-video-sec {
   background-color: #000;
   width: 100%;
@@ -222,9 +216,6 @@ $button-col: #ddd;
   background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65));
   transition: opacity 0.2s ease-in-out;
 }
-/*.video-controls:hover {
-  opacity: 1;
-}*/
 .c-seek-bar {
   flex-grow: 1;
 }
@@ -320,6 +311,47 @@ $button-col: #ddd;
 }
 :focus {outline:none;}
 ::-moz-focus-inner {border:0;}
+
+/* Mobile UX */
+@media (max-width: 800px) {
+  .pane-video-card {
+    border-radius: 0;
+    box-shadow: 0 1px 2px #000;
+  }
+}
+@media only screen and (max-width: 500px), only screen and (max-height: 500px) {
+  .pane-video-card:not(.mini) {
+    display: none;
+  }
+  .full-name {
+    display: none;
+  }
+  .nav-buttons {
+    display: none;
+  }
+  .search-pad {
+    padding-left: 0;
+  }
+  .header-logo {
+    width: 40px;
+    padding-left: 0;
+    padding-right: 5px;
+    text-align: center;
+  }
+  .search-pad {
+    max-width: 100%;
+  }
+  .caption-bar {
+    display: none;
+  }
+  .nav-link {
+    display: none;
+  }
+  .thumb {
+    height: 90px;
+    width: 120px;
+  }
+}
 
 /* Skellies */
 .skel  {background-color: #e6e6e6; background-image: none; box-shadow: none; border: none;}

@@ -62,7 +62,17 @@ function toggle_fs(e) {
   e.stopImmediatePropagation();
 }
 
+var search_open = false;
 $().ready(function() {
+  $("div").on("pointerdown", "#search-toggle", function(e) {
+    var size = search_open ? '0' : '50px';
+    $("#search-grow").css({height: size});
+    $("#s-bar").css({top: size});
+    $("#search-toggle").toggleClass("active");
+    search_open = !search_open;
+    e.stopImmediatePropagation();
+  });
+
   var temp_s = $("script#minitemp").html();
   var MINI_TEMP = Handlebars.compile(temp_s);
   temp_s = $("script#fulltemp").html();
@@ -134,8 +144,14 @@ $().ready(function() {
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
   appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+  appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
+  appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
   appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+  appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
+  appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
   appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+  appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
+  appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
 
   /*var $video = $("#main-video");
   var $bar = $(".c-seek-bar");
@@ -187,15 +203,11 @@ $().ready(function() {
   });
 
   function hideControls() {
-    var ot = this;
     $("video").each(function() {
-//      var video = this
-
       if (this.currentTime == 0 | !this.paused) {
-        $(ot).css("opacity", "0");
+        $(this).parent().children(".video-controls").first().css("opacity", "0");
       }
     })
-    var video = $(this).parent().children('video').first().get(0);
   }
   $(".video-controls").hover(function(){
     $(this).css('opacity', '1');
@@ -203,12 +215,17 @@ $().ready(function() {
 
 
   function resetTimer() {
-    //$(".video-controls").css("opacity", "1");
+    $("video").each(function() {
+      if (this.currentTime != 0 & !this.paused2) {
+        $(this).parent().children(".video-controls").first().css("opacity", "1");
+      }
+    })
+
     clearTimeout(timeoutt);
     timeoutt = setTimeout(hideControls, 3000);
   }
-  $("div").on('pointerdown pointermove', ".video-area", resetTimer);
-
+  resetTimer();
+  $("div").on('pointerdown pointermove', ".card-video-sec", resetTimer);
   $("div").on("pointerdown", ".c-seek-bar", barMouseDownHandler)
 
   function barMouseDownHandler(e) {

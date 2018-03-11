@@ -34,6 +34,9 @@ $caption-fg: #fff;
 
 $footer-colour: #191C17;
 
+$mobile-thresh: 600px;
+$mobile-thresh-sub: 601px;
+
 * {
   padding: 0;
   margin: 0;
@@ -63,7 +66,6 @@ html, body {
 
   background-color: $bg-colour;
 }
-
 .cursive {
   font-family: 'Pacifico', cursive;
 }
@@ -86,6 +88,45 @@ html, body {
 
   background-color: $header-colour;
   display: flex;
+}
+.header-bar-mob {
+  height: 50px;
+  width: 100%;
+
+  background-color: $header-colour;
+  display: table !important;
+  table-layout: fixed;
+  z-index: 5;
+}
+.header-bar-mob>* {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+
+  text-align: center;
+  color: $header-links;
+  font-size: 25px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+.header-bar-mob>*:hover, .header-bar-mob>*.active {
+  color: $header-fg;
+  background-color: darken($header-colour, 2);
+}
+.search-bar {
+  height: 50px;
+  background-color: lighten($header-colour, 4);
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  transition: top 0.2s ease-in;
+}
+#search-grow {
+  height: 0;
+  transition: height 0.2s ease-in;
 }
 .header-logo {
   padding: 8px 15px;
@@ -118,6 +159,34 @@ html, body {
   flex-grow: 1;
   padding: 10px 10px;
 }
+.search-pad-mob {
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+}
+.search-mob {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.search-mob>input {
+  height: 100%;
+  width: 100%;
+  padding: 5px 10px 5px 40px;
+  border: 1px solid $search-border;
+  font-size: 15px;
+}
+.search-mob>.fa {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 0;
+  top: -1px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 18px;
+}
+
 .search {
   width: 100%;
   height: 100%;
@@ -415,6 +484,17 @@ html, body {
 }
 
 /* Generics */
+@media only screen and (max-width: $mobile-thresh), only screen and (max-height: $mobile-thresh) {
+  .nomobile {
+    display: none !important;
+  }
+}
+@media only screen and (min-width: $mobile-thresh-sub) and (min-height: $mobile-thresh-sub) {
+  .mobile {
+    display: none !important;
+  }
+}
+
 .ctr-x {justify-content: center;}
 .ctr-y {align-items: center;}
 .fc    {display: flex; flex-direction: column;}
