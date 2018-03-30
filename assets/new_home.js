@@ -63,8 +63,11 @@ function toggle_fs(e) {
 }
 
 var search_open = false;
+
 $().ready(function() {
-  $("div").on("pointerdown", "#search-toggle", function(e) {
+  var clickH = "mousedown tap";
+
+  $("div").on(clickH, "#search-toggle", function(e) {
     var size = search_open ? '0' : '50px';
     $("#search-grow").css({height: size});
     $("#s-bar").css({top: size});
@@ -93,7 +96,7 @@ $().ready(function() {
   $(".comment-tog").text("SHOW COMMENTS");
   $(".comments").hide();
 
-  $("div").on("pointerdown", ".comments-tog", function() {
+  $("div").on(clickH, ".comments-tog", function() {
     var $cblock = $(this).parent().children(".comments").first();
     if ($cblock.is(":visible")) {
       $cblock.hide();
@@ -103,7 +106,7 @@ $().ready(function() {
       $(this).text("HIDE COMMENTS");
     }
   });
-  $("div").on("pointerdown", ".mini-show-more", function() {
+  $("div").on(clickH, ".mini-show-more", function() {
     var $dblock = $(this).parent().parent().children(".description").first().children(".more").first();
     if ($dblock.is(":visible")) {
       $dblock.hide();
@@ -141,9 +144,10 @@ $().ready(function() {
     $("#central-column").append(ne.slice(2));
   }
 
+
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
-  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://htcraft.ml/v/y/_0KAFzm9MJE")
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
   appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
@@ -153,16 +157,7 @@ $().ready(function() {
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
 
-  /*var $video = $("#main-video");
-  var $bar = $(".c-seek-bar");
-  var $scrubber = $(".c-sb-scrub");
-  var $progress = $(".c-sb-prog");
-  var $buffer = $(".c-sb-buff");
-  var $handle = $(".c-sb-handle");
-  var $timestamp = $("#timestamp");
-  var $playpause = $("#play-pause-btn");
-  var $fullscreen = $("#fs-btn");*/
-  var timeoutt
+  var timeoutt;
 
   function play(e) {
     $("video").each(function() {
@@ -172,61 +167,67 @@ $().ready(function() {
     $video.trigger('play');
     var $playpause = $(e.target).parent().children(".video-controls").first().children(".inner-controls").first().children(".c-play-pause").first();
     var i = $playpause.children().first();
-    i.removeClass('fa-play');
-    i.addClass('fa-pause');
+    i.removeClass('i-play');
+    i.addClass('i-pause');
     e.stopImmediatePropagation();
+
+    resetTimer();
   }
   function pause(e) {
     var $video = $(e.target).parent().children('video').first();
     $video.trigger('pause');
     $vc = $(e.target).parent().children(".video-controls").first();
-    $vc.css({'opacity': 1});
+    $vc.fadeIn(200);
     var $playpause = $vc.children(".inner-controls").first().children(".c-play-pause").first();
     var i = $playpause.children().first();
-    i.removeClass('fa-pause');
-    i.addClass('fa-play');
+    i.removeClass('i-pause');
+    i.addClass('i-play');
     e.stopImmediatePropagation();
   }
 
-  $('div').on('pointerdown', '.card-video-sec', function(e) {
+  $('div').on(clickH, '.card-video-sec', function(e) {
     var $video = $(e.target).parent().children('video').first();
     $video.get(0).paused ? play(e) : pause(e);
   });
-  $('div').on('pointerdown', '.c-play-pause', function(e) {
+  $('div').on("dblclick", '.card-video-sec', function(e) {
+    e.target = $(e.target).find(".c-full-screen").first();
+    toggle_fs(e);
+  });
+  $('div').on(clickH, '.c-play-pause', function(e) {
     var $video = $(e.target).parent().parent().parent().children('video').first();
     e.target = $(e.target).parent().parent();
     $video.get(0).paused ? play(e) : pause(e);
   });
-  $("div").on("pointerdown", ".c-full-screen", toggle_fs);
-  $("div").on('pointerdown', ".inner-controls", function(e) {
+  $("div").on(clickH, ".c-full-screen", toggle_fs);
+  $("div").on(clickH, ".inner-controls", function(e) {
     e.stopImmediatePropagation();
   });
 
   function hideControls() {
     $("video").each(function() {
       if (this.currentTime == 0 | !this.paused) {
-        $(this).parent().children(".video-controls").first().css("opacity", "0");
+        $(this).parent().children(".video-controls").first().fadeOut(200);//css("opacity", "0", function () {this.hide()});
       }
     })
   }
   $(".video-controls").hover(function(){
-    $(this).css('opacity', '1');
+    $(this).fadeIn(200);//css('opacity', '1');
   }, hideControls);
 
 
   function resetTimer() {
     $("video").each(function() {
-      if (this.currentTime != 0 & !this.paused2) {
-        $(this).parent().children(".video-controls").first().css("opacity", "1");
-      }
+      //if (this.currentTime != 0 & !this.paused2) {
+        $(this).parent().children(".video-controls").first().fadeIn(200);//css("opacity", "1");
+      //}
     })
 
     clearTimeout(timeoutt);
     timeoutt = setTimeout(hideControls, 3000);
   }
   resetTimer();
-  $("div").on('pointerdown pointermove', ".card-video-sec", resetTimer);
-  $("div").on("pointerdown", ".c-seek-bar", barMouseDownHandler)
+  $("div").on(clickH + ' pointermove', ".card-video-sec", resetTimer);
+  $("div").on(clickH, ".c-seek-bar", barMouseDownHandler)
 
   function barMouseDownHandler(e) {
     var $this = $(this);

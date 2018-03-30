@@ -55,6 +55,8 @@ body, html {
   background-position: center;
 
   position: relative;
+
+  cursor: none;
 }
 .thumb {
   background-color: #000;
@@ -212,9 +214,11 @@ $button-col: #ddd;
 	left: 0;
 	right: 0;
   top: 0;
-  opacity: 0;
+  /*opacity: 0;*/
   background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65));
-  transition: opacity 0.2s ease-in-out;
+  /*transition: opacity 0.2s ease-in-out;*/
+
+  cursor: default;
 }
 .c-seek-bar {
   flex-grow: 1;
@@ -242,6 +246,8 @@ $button-col: #ddd;
 }
 .timestamp {
   padding-top: 0.5px;
+  user-select: none;
+  -moz-user-select: none;
 }
 .c-seek-bar {
   height: 15px;
@@ -312,6 +318,41 @@ $button-col: #ddd;
 :focus {outline:none;}
 ::-moz-focus-inner {border:0;}
 
+.i-pause {
+  width: 14px;
+  height: 36px;
+  position: relative;
+}
+.i-pause::before, .i-pause::after {
+  content: "";
+  width: 5px;
+  top: 11px;
+  height: 14px;
+  background-color: #ddd;
+  position: absolute;
+}
+.i-pause::before { left: 0; }
+.i-pause::after { right: 0; }
+
+.i-play {
+  width: 14px;
+  height: 36px;
+  position: relative;
+}
+.i-play::after {
+  content: "";
+	display: block;
+	width: 0;
+	height: 0;
+  left: 0;
+  top: 11px;
+  position: absolute;
+	border-top: 7px solid transparent;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid transparent;
+	border-left: 13px solid #ddd;
+}
+
 /* Mobile UX */
 @media (max-width: 800px) {
   .pane-video-card {
@@ -320,9 +361,9 @@ $button-col: #ddd;
   }
 }
 @media only screen and (max-width: 500px), only screen and (max-height: 500px) {
-  .pane-video-card:not(.mini) {
+  /*.pane-video-card:not(.mini) {
     display: none;
-  }
+  }*/
   .full-name {
     display: none;
   }
@@ -350,6 +391,17 @@ $button-col: #ddd;
   .thumb {
     height: 90px;
     width: 120px;
+  }
+}
+
+@media only screen and (max-width: 1150px) {
+  #left-column {
+    display: none;
+  }
+}
+@media only screen and (max-width: 950px) {
+  .side-column {
+    display: none;
   }
 }
 
