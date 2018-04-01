@@ -9,7 +9,7 @@ app = Sanic()
 @app.exception(NotFound)
 @app.exception(FileNotFound)
 async def not_found(request, exception):
-    return response.redirect('/404.html')
+    return await response.file('404.html')
 
 
 @app.route("/yt/<video>", methods=["GET"])
@@ -23,7 +23,10 @@ async def serve_file(request):
     return await response.file('index.html')
 
 
-app.static('/', './')
+app.static('/assets', './assets')
+app.static('/profile', './profile/index.html')
+app.static('/watch', './watch/index.html')
+app.static('/login', './login/index.html')
 
 
 if __name__ == "__main__":
