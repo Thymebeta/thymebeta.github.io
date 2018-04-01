@@ -6,7 +6,7 @@ import shutil
 import sys
 import io
 
-PORT = 8001
+PORT = 8000
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, request, client_addr, server):

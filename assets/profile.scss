@@ -1,0 +1,340 @@
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  background-color: #233613;
+}
+
+#central-column {
+  width: 100%;
+  max-width: 1000px;
+  min-height: 100%;
+  margin: 0 auto;
+}
+
+
+.profile-header {
+  background-size: cover;
+  background-image: url("http://openwalls.com/image/7839/green_sky_light_1920x1080.jpg");
+  background-position: center;
+  height: 150px;
+
+  margin: 10px 0 10px;
+  border-radius: 4px;
+  box-shadow: 1px 2px 2px #000;
+
+  position: relative;
+}
+.profile-sub {
+  width: 100%;
+  height: 35px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  bottom: 0;
+  left: 0;
+  position: absolute
+}
+.icon-link {
+  border-radius: 12.5px;
+  height: 25px;
+  min-width: 25px;
+  margin: 5px 5px 5px 0;
+  text-align: center;
+  display: inline-block;
+  line-height: 25px;
+  background-color: #3a5a20;
+  color: #fff;
+  position: relative;
+
+  text-decoration: none;
+}
+.icon-link>i {
+  border-radius: 12.5px;
+  height: 25px;
+  width: 25px;
+  overflow: hidden;
+  text-align: center;
+  line-height: 25px;
+  display: inline-block;
+  background-color: #66a03a;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.icon-link>div {
+  padding: 0 5px 0 30px;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+  overflow: hidden;
+  width: auto;
+
+  transition: font-size .25s,
+  margin .25s,
+  padding .25s,
+  opacity .5s .25s;
+}
+.icon-link:not(:hover)>div {
+  font-size: 0;
+  margin: 0;
+  opacity: 0;
+  padding: 0;
+  transition: opacity .25s,
+  font-size .5s .25s,
+  margin .5s .25s,
+  padding .5s .25s;
+}
+.chan-name {
+  line-height: 35px;
+  font-size: 22px;
+  margin-left: 10px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+}
+.pfp-settings {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  font-size: 15px;
+}
+.header-pfp {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  background-color: transparent;
+  background-image: url("../thyme.png");
+  background-position: center;
+  background-size: cover;
+}
+
+
+#rhs {
+  width: 33%;
+  float: right;
+}
+#lhs {
+  width: 66%;
+  float: left;
+}
+
+
+.side-msg {
+  font-size: small;
+  text-wrap: normal;
+}
+.msg-btn {
+  font-size: 12px;
+
+  color: #fff;
+  padding: 0 8px;
+  line-height: 28px;
+  background-color: #466c26;
+  margin-top: 5px;
+}
+.add-msg {
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  min-height: 48px;
+  font-size: small;
+  color: #000;
+  background-color: #edfae1;
+  padding: 2px;
+}
+.pane-video-card.inverted {
+  background-color: #3a5a20;
+  color: #fff;
+}
+.inverted>.side-msg-sub {
+  font-size: x-small;
+  color: #eee;
+  margin-top: 5px;
+}
+.side-msg-sub {
+  font-size: x-small;
+  color: #888;
+  margin-top: 5px;
+}
+
+
+.pane-video-card {
+  margin: 10px 0 10px;
+  border-radius: 4px;
+  box-shadow: 1px 2px 2px #000;
+  background-color: #fff;
+  padding: 20px;
+  width: 100%;
+}
+.pane-video-card.mini {
+  padding: 10px;
+}
+.description {
+  font-size: 12px;
+  line-height: 13px;
+}
+.description>p {
+  margin: 2px 0;
+}
+.description>.more>p {
+  margin: 2px 0;
+}
+.thumb {
+  background-color: #000;
+  height: 90px;
+  width: 160px;
+
+  background-size: cover;
+  background-position: center;
+}
+.mini-btn-row {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #555;
+  display: block;
+  text-align: left;
+  user-select: none;
+  -moz-user-select: none;
+}
+.mini-btn-row>div {
+  cursor: pointer;
+  display: inline;
+  text-align: left;
+  user-select: none;
+  -moz-user-select: none;
+}
+.mini-btn-row>div:hover {
+  text-decoration: underline;
+}
+
+.mini-video-info {
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.pfp {
+  border-radius: 50%;
+  background-size: cover;
+  width: 38px;
+  height: 38px;
+  box-shadow: -1px 2px 2px #000;
+  background-color: #75b540;
+  background-position: center;
+}
+.pfp.mini {
+  width: 24px;
+  height: 24px;
+  box-shadow: none;
+}
+.mini-title {
+  margin-left: 5px;
+  line-height: 24px;
+}
+
+.mini-video-info>.title {
+  height: 26px;
+}
+.title, .author, .views {
+  margin: 3px 0;
+}
+.author {
+  border-top: 1px solid #75b540;
+  padding-right: 10px;
+}
+.views {
+  border-top: 1px solid #75b540;
+}
+.title {
+  font-weight: bold;
+}
+
+
+/* Skellies */
+.skel  {background-color: #e6e6e6; background-image: none; box-shadow: none; border: none;}
+
+.title.skel, .mini-title.skel {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  height: 16px;
+}
+.author.skel {
+  margin-right: 4px;
+  height: 16px;
+  border: none;
+  flex-grow: 1;
+  width: 60%;
+  margin-bottom: 6px;
+}
+.views.skel {
+  margin-left: 4px;
+  height: 16px;
+  border: none;
+  flex-grow: 1;
+}
+.description.skel {
+  flex-grow: 1;
+}
+.show-full.skel {
+  border: none;
+  margin-top: -2px;
+  cursor: inherit;
+}
+.show-full.skel:hover {
+  background-color: #e6e6e6;
+}
+
+
+/* Mobile UX */
+@media (max-width: 800px) {
+  .profile-header, .pane-video-card {
+    border-radius: 0;
+    box-shadow: 0 1px 2px #000;
+  }
+}
+@media only screen and (max-width: 500px), only screen and (max-height: 500px) {
+  /*.pane-video-card:not(.mini) {
+    display: none;
+  }*/
+  .full-name {
+    display: none;
+  }
+  .nav-buttons {
+    display: none;
+  }
+  .search-pad {
+    padding-left: 0;
+  }
+  .header-logo {
+    width: 40px;
+    padding-left: 0;
+    padding-right: 5px;
+    text-align: center;
+  }
+  .search-pad {
+    max-width: 100%;
+  }
+  .caption-bar {
+    display: none;
+  }
+  .nav-link {
+    display: none;
+  }
+  .thumb {
+    height: 90px;
+    width: 120px;
+  }
+}
+
+@media only screen and (max-width: 1150px) {
+  #left-column {
+    display: none;
+  }
+}
+@media only screen and (max-width: 950px) {
+  .side-column {
+    display: none;
+  }
+}

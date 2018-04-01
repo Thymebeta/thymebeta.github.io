@@ -62,19 +62,8 @@ function toggle_fs(e) {
   e.stopImmediatePropagation();
 }
 
-var search_open = false;
-
 $().ready(function() {
   var clickH = "mousedown tap";
-
-  $("div").on(clickH, "#search-toggle", function(e) {
-    var size = search_open ? '0' : '50px';
-    $("#search-grow").css({height: size});
-    $("#s-bar").css({top: size});
-    $("#search-toggle").toggleClass("active");
-    search_open = !search_open;
-    e.stopImmediatePropagation();
-  });
 
   var temp_s = $("script#minitemp").html();
   var MINI_TEMP = Handlebars.compile(temp_s);
@@ -106,19 +95,9 @@ $().ready(function() {
       $(this).text("HIDE COMMENTS");
     }
   });
-  $("div").on(clickH, ".mini-show-more", function() {
-    var $dblock = $(this).parent().parent().children(".description").first().children(".more").first();
-    if ($dblock.is(":visible")) {
-      $dblock.hide();
-      $(this).text("SHOW MORE");
-    } else {
-      $dblock.show();
-      $(this).text("SHOW LESS");
-    }
-  });
 
   function appendShortBlock(title, author, views, desc, descmore, pfp, thumb) {
-    ne = MINI_TEMP({
+    var ne = MINI_TEMP({
       title: title,
       author: author,
       views: views + " Views",
@@ -130,7 +109,7 @@ $().ready(function() {
     $("#central-column").append(ne.slice(2));
   }
   function appendLargeBlock(title, author, views, pfp, videourl) {
-    ne = FULL_TEMP({
+    var ne = FULL_TEMP({
       title: title,
       author: author,
       views: views + " Views",
@@ -147,7 +126,7 @@ $().ready(function() {
 
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
-  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://htcraft.ml/v/y/_0KAFzm9MJE")
+  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://htcraft.ml/v/y/_0KAFzm9MJE");
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
   appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
@@ -176,7 +155,7 @@ $().ready(function() {
   function pause(e) {
     var $video = $(e.target).parent().children('video').first();
     $video.trigger('pause');
-    $vc = $(e.target).parent().children(".video-controls").first();
+    var $vc = $(e.target).parent().children(".video-controls").first();
     $vc.fadeIn(200);
     var $playpause = $vc.children(".inner-controls").first().children(".c-play-pause").first();
     var i = $playpause.children().first();
@@ -205,7 +184,7 @@ $().ready(function() {
 
   function hideControls() {
     $("video").each(function() {
-      if (this.currentTime == 0 | !this.paused) {
+      if (this.currentTime === 0 || !this.paused) {
         $(this).parent().children(".video-controls").first().fadeOut(200);//css("opacity", "0", function () {this.hide()});
       }
     })
@@ -220,7 +199,7 @@ $().ready(function() {
       //if (this.currentTime != 0 & !this.paused2) {
         $(this).parent().children(".video-controls").first().fadeIn(200);//css("opacity", "1");
       //}
-    })
+    });
 
     clearTimeout(timeoutt);
     timeoutt = setTimeout(hideControls, 3000);
@@ -233,7 +212,7 @@ $().ready(function() {
     var $this = $(this);
     var x = e.pageX - $this.offset().left;
     var percent = x / $this.width();
-    var $sb = $this.parent()
+    //var $sb = $this.parent();
     updateProgressWidth($this, percent);
     updateVideoTime($this.parent().parent().children("video").first().get(0), percent);
 
@@ -264,13 +243,13 @@ $().ready(function() {
     $sb.children(".c-sb-handle").css({left: (percent * 100) + "%"})
   }
 
-  $("video").on("timeupdate", videoTimeUpdateHandler)
-  $("div").on("pointermove", ".c-seek-bar", barMouseMoveHandler)
+  $("video").on("timeupdate", videoTimeUpdateHandler);
+  $("div").on("pointermove", ".c-seek-bar", barMouseMoveHandler);
 
   function updateLoop() {
     $("video").each(function() {
       if (this.buffered.length) {
-        var percent = this.buffered.end(0) / this.duration;
+        //var percent = this.buffered.end(0) / this.duration;
         var time = this.currentTime;
         var range = 0;
         var bf = this.buffered;
