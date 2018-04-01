@@ -1,10 +1,11 @@
+from auth import auth
 from sanic import Sanic, response
 from sanic.exceptions import NotFound, FileNotFound
 
 
 PORT = 8080
-app = Sanic()
-
+app = Sanic(__name__)
+app.blueprint(auth)
 
 @app.exception(NotFound)
 @app.exception(FileNotFound)
