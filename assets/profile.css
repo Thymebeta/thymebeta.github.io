@@ -58,6 +58,7 @@ body, html {
 .icon-link > div {
   padding: 0 5px 0 30px;
   height: 25px;
+  font-size: 13px;
   text-align: center;
   line-height: 25px;
   overflow: hidden;
@@ -104,6 +105,14 @@ body, html {
   width: 66%;
   float: left; }
 
+.nothing-here {
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  margin: 25px 0;
+  opacity: 0.5;
+  font-style: italic; }
+
 .side-msg {
   font-size: small;
   text-wrap: normal; }
@@ -115,6 +124,10 @@ body, html {
   line-height: 28px;
   background-color: #466c26;
   margin-top: 5px; }
+
+.msg-btn:hover {
+  background-color: #4b7429;
+  cursor: pointer; }
 
 .add-msg {
   width: 100%;

@@ -80,6 +80,7 @@
     </div>
   </div>
 </script>
+<!--
 <script id="videotemp" type="text/x-handlebars-template">
   <div class="card-video-sec">
     <video class="video-stream">
@@ -103,10 +104,12 @@
       </div>
     </div>
   </div>
-</script>
+</script>-->
 <script id="fulltemp" type="text/x-handlebars-template">​
   <div class="pane-video-card">
-      {{&videoHelper videourl}}
+      <div class="card-video-sec">
+        <iframe src="{{ video_url }}" allowfullscreen></iframe>
+      </div>
       <div class="video-info ctr-y fb">
           <div class="pfp fs" style="background-image: url('{{ pfp }}')"></div>
           <div class="fg fc ctr-y">
