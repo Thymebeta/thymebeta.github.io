@@ -97,7 +97,7 @@ $(function () {
             loadSource(sources[1])
         }, 5000);
     } else {
-        loadSource("//htcraft.ml/v/y/_0KAFzm9MJE");
+        loadSource("//htcraft.ml/v/y/" + video.substring(1));
     }
 
     function play(e) {
@@ -227,5 +227,14 @@ $(function () {
             }
         }
         $("#timestamp").text(formatTimestamp(time, duration));
+    }
+
+    document.body.onkeydown = function(e){
+        if(e.keyCode === 32 || e.key === " "){
+            $video[0].paused ? play(e) : pause(e);
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            e.preventDefault();
+        }
     }
 });
