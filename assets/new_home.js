@@ -114,7 +114,7 @@ $().ready(function() {
       author: author,
       views: views + " Views",
       pfp: pfp,
-      video_url: window.location.href + "e/cd " + videourl,
+      video_url: window.location.href + "e/" + videourl,
       comments: [
         {auth: 'hi', root: true, time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: []}]}, {auth: 'hi', time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: []}]}]},
         {auth: 'hi', root: true, time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: []}]}, {auth: 'hi', time: 'today', content: 'no', children: [{auth: 'hi', time: 'today', content: 'no', children: []}]}]}
