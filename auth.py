@@ -115,7 +115,7 @@ async def register(request):
     """
     a = request.form
     await asyncio.sleep(0.07)
-    hsh = md5(a['n'] + a['p'] + a['u'] + a['e'])
+    hsh = md5((a['n'] + a['p'] + a['u'] + a['e']).decode())
 
     if a['c'] != hsh:
         return return_cors(json, {'err': 'discrepancy between client and server'}, status=500)
