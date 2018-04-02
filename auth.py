@@ -142,3 +142,5 @@ async def register(request):
             '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
             get_snowflake(), a['u'], a['e'], phash
         )
+
+    return return_cors(json, {'username': a['u']})
