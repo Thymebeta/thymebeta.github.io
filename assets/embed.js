@@ -63,7 +63,7 @@ function toggle_fs(e) {
 }
 
 $(function () {
-    let sources = ["http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"];
+    let sources = ["//clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "//commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"];
     var $video = $("#video-stream");
     var clickH = "mousedown tap";
     var timeout_t;
@@ -97,7 +97,7 @@ $(function () {
             loadSource(sources[1])
         }, 5000);
     } else {
-        loadSource("https://htcraft.ml/v/y/_0KAFzm9MJE");
+        loadSource("//htcraft.ml/v/y/_0KAFzm9MJE");
     }
 
     function play(e) {

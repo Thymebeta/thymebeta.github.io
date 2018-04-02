@@ -3,15 +3,17 @@ import http.server
 import socketserver
 import requests
 import shutil
+import ssl
 import sys
 import io
 
-PORT = 8000
+PORT = 8001
+
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, request, client_addr, server):
-#        print(self.translate_path(self.path))
-#        print(request)
+        # print(self.translate_path(self.path))
+        # print(request)
 
         super().__init__(request, client_addr, server)
 
@@ -29,13 +31,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html; charset=%s" % sys.getfilesystemencoding())
             self.send_header("Content-Length", str(len(encoded)))
             self.end_headers()
-            #return f
+            # return f
 
             shutil.copyfileobj(f, self.wfile)
-#self.wfile.write(r.text)
+            # self.wfile.write(r.text)
             return
         http.server.SimpleHTTPRequestHandler.do_GET(self)
 
+
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    httpd.socket = ssl.wrap_socket(httpd.socket, certfile='cert.pem', keyfile='key.pem', server_side=True)
     print("serving at port", PORT)
     httpd.serve_forever()
