@@ -1,10 +1,16 @@
-from sanic import Blueprint
-from sanic.response import json
 import hashlib
 import time
 import asyncio
 import bcrypt
+
+from sanic import Blueprint
+from sanic.response import json
+from sanic.exceptions import abort
+
 from asyncpg import connect, create_pool
+from datetime import datetime
+
+auth = Blueprint('auth', url_prefix='/auth')
 
 
 async def expire_nonce(ip, endp):
@@ -12,42 +18,47 @@ async def expire_nonce(ip, endp):
         await con.execute('''DELETE FROM nonces WHERE ip = $1 AND endpoint = $2;''', ip, endp)
 
 
-async def md5(data):
+def md5(data):
     return hashlib.md5(bytes(data, "utf-8")).hexdigest()
 
 
-auth = Blueprint('auth', url_prefix='/auth')
+def get_snowflake():
+    """
+    Get a unique id
+    TODO: make this better
+    """
+    return str(time.time()).replace('.', '')
 
 
 @auth.listener('before_server_start')
 async def register_db(app, loop):
-    auth.pool = await create_pool(**DB_CONFIG, loop=loop, max_size=1000)
+    auth.pool = await create_pool(user='postgres', loop=loop, max_size=1000)
 
 
 @auth.get('/ping')
 async def ping(request):
-    '''
+    """
     GET URL/auth/ping
 
     returns time in UTC at server
-    '''
+    """
 
     return json({"time": time.time()})
 
 
 @auth.get('/getip')
 async def getip(request):
-    '''
+    """
     GET URL/auth/getip
 
     returns ip of requester
-    '''
+    """
     return json({"ip": request.ip})
 
 
 @auth.get('/getnonce')
 async def getnonce(request):
-    '''
+    """
     GET URL/auth/getnonce
 
     generates a nonce that can be used for authenticating between requests
@@ -58,28 +69,34 @@ async def getnonce(request):
     e  endpoint endpoint (e.x. "/auth/login")
     i  ip       GET /api/auth/getip
 
-    '''
-    tme = request.raw_args['t']
-    hsh = request.raw_args['h']
-    endp = request.raw_args['e']
-    ip = request.raw_args['i']
+    """
+    try:
+        tme = request.raw_args['t']
+        hsh = request.raw_args['h']
+        endp = request.raw_args['e']
+        ip = request.raw_args['i']
+    except KeyError:
+        abort(400)
+        return
 
-    check = await md5((tme + request.ip).encode('utf8')).decode()  # generate server check hash
+    check = md5(tme + request.ip)  # generate server check hash
+
     if check != hsh:
         return json({'err': 'discrepancy between client and server hash (possibly wrong IP)'}, status=500)
 
-    nonce = await md5((ip + bcrypt.gensalt()).encode('utf8')) + bcrypt.gensalt().decode()
+    nonce = md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
     await expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
     async with auth.pool.acquire() as con:
         await con.execute(
-            '''INSERT INTO nonces (nonce, ip, endpoint, time) VALUES ($1, $2, $3) ON CONFLICT (ip) DO NOTHING''', nonce,
-            ip, endp, time.time())
+            '''INSERT INTO nonces (nonce, ip, endpoint, time) VALUES ($1, $2, $3, $4) ON CONFLICT (ip) DO NOTHING''',
+            nonce, ip, endp, datetime.now()
+        )
     return json({"nonce": nonce})
 
 
 @auth.post('/register')
 async def register(request):
-    '''
+    """
     POST URL/auth/register
 
     registers a user
@@ -91,13 +108,13 @@ async def register(request):
     e email     the email for the user
     c hash      hash(nonce || password || username || email)
 
-    '''
+    """
     a = request.raw_args
     await asyncio.sleep(0.07)
-    hsh = await md5(a['n'] + a['p'] + a['u'] + a['e'])
+    hsh = md5(a['n'] + a['p'] + a['u'] + a['e'])
 
     if a['c'] != hsh:
-        return json(status=500)
+        return json({'err': 'discrepancy between client and server hash'}, status=500)
 
     async with auth.pool.acquire() as con:
         ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', a['n'])
@@ -112,7 +129,12 @@ async def register(request):
         await expire_nonce(request.ip, "/auth/register")  # nonce is older than 5 seconds
         return json({'err': 'nonce expired'}, status=500)
 
-    phash = bcrypt.hashpw(a['p'].encode('utf8'),
-                          bcrypt.gensalt()).decode()  # this is where the magic happens - generate the hash for the password
+    phash = bcrypt.hashpw(
+        a['p'].encode('utf8'),
+        bcrypt.gensalt()
+    ).decode()  # this is where the magic happens - generate the hash for the password
     async with auth.pool.acquire() as con:
-        await con.execute('''INSERT INTO users (user, email, pass) VALUES ($1, $2, $3)''', a['u'], a['e'], phash)
+        await con.execute(
+            '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
+            get_snowflake(), a['u'], a['e'], phash
+        )
