@@ -22,8 +22,9 @@ def return_cors(function, *args, **kwargs):
     return function(*args, **kwargs, headers={'Access-Control-Allow-Origin': '*'})
 
 
-def md5(data):
-    return hashlib.md5(bytes(data, "utf-8")).hexdigest()
+def md5(data, encode=True):
+    if encode: data = bytes(data, "utf-8")
+    return hashlib.md5(data).hexdigest()
 
 
 def get_snowflake():
@@ -115,7 +116,7 @@ async def register(request):
     """
     a = request.form
     await asyncio.sleep(0.07)
-    hsh = md5((a['n'] + a['p'] + a['u'] + a['e']).decode())
+    hsh = md5(a['n'] + a['p'] + a['u'] + a['e'], encode=False)
 
     if a['c'] != hsh:
         return return_cors(json, {'err': 'discrepancy between client and server'}, status=500)
