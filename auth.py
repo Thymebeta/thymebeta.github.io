@@ -113,7 +113,8 @@ async def register(request):
     c hash      hash(nonce || password || username || email)
 
     """
-    a = request.json
+    a = request.form
+    a = {k: v[0] for k, v in a.items()}
     print(a)
     await asyncio.sleep(0.07)
     hsh = md5(a['n'] + a['p'] + a['u'] + a['e'])
