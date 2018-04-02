@@ -1,0 +1,135 @@
+#central-column {
+  padding: 10px;
+  width: 100%;
+  max-width: 800px;
+  min-height: 100%;
+  margin: 0 auto;
+  transition: padding 0.2s ease, max-width 0.5s ease; }
+
+#upload-region {
+  width: 100%;
+  min-height: 400px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 1px 2px 2px #000;
+  position: relative;
+  transition: min-height 0.5s ease; }
+
+#middle-logo {
+  position: absolute;
+  left: 5%;
+  width: 90%;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center; }
+
+#ml-ico, #ml-cap, #ml-sub {
+  cursor: pointer; }
+
+#ml-cap {
+  font-size: 20px;
+  margin: 15px 0 9px;
+  color: #444; }
+
+#ml-sub {
+  padding: 7px;
+  color: #777;
+  font-size: 15px; }
+
+#ml-name {
+  padding: 7px;
+  color: #999;
+  font-style: italic;
+  font-size: 12px; }
+
+#ml-ico {
+  font-size: 80px;
+  color: #ccc; }
+
+#continue-btn {
+  display: inline-block;
+  margin-top: 5px; }
+
+#uploading {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  right: 10px;
+  bottom: 10px; }
+
+#upload-bar {
+  width: 100%;
+  background-color: #ccc;
+  height: 25px;
+  position: relative;
+  line-height: 25px;
+  padding-left: 5px;
+  overflow: hidden;
+  color: #222; }
+
+#u-bar-progress {
+  padding-left: 5px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3%;
+  background-color: #466c26;
+  overflow: hidden;
+  text-wrap: none;
+  white-space: nowrap;
+  color: #ddd;
+  transition: width 0.2s linear; }
+
+#title {
+  width: 100%;
+  height: 35px;
+  color: #222;
+  font-size: 20px;
+  line-height: 35px;
+  margin: 10px 0;
+  border-bottom: 2px solid #888;
+  padding: 0 0;
+  transition: border-bottom 0.2s ease; }
+
+#title:hover {
+  border-bottom: 2px solid #555; }
+
+#title:focus {
+  border-bottom: 2px solid #466c26; }
+
+.btn {
+  padding: 15px;
+  font-size: 0.8em;
+  color: #fff;
+  background-color: #75b540;
+  border: 1px solid #90c366;
+  user-select: none;
+  -moz-user-select: none; }
+
+.btn.disabled {
+  color: #888;
+  background-color: #ccc;
+  border: 1px solid #ddd; }
+
+.btn:not(.disabled) {
+  cursor: pointer; }
+
+.btn:not(.disabled):hover {
+  background-color: #69a239; }
+
+.btn:focus {
+  outline: none !important; }
+
+.btn:-moz-focusring {
+  outline: none !important; }
+
+@media (max-width: 800px) {
+  #upload-region {
+    border-radius: 0;
+    box-shadow: 0 1px 2px #000; }
+
+  #central-column {
+    padding: 10px 0; } }
+
+/*# sourceMappingURL=upload.css.map */

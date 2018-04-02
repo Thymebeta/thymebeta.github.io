@@ -1,9 +1,3 @@
-* {
-  box-sizing: border-box; }
-
-body, html {
-  background-color: #233613; }
-
 #central-column {
   width: 100%;
   max-width: 750px;
