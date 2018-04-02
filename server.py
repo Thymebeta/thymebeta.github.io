@@ -7,6 +7,7 @@ PORT = 8080
 app = Sanic(__name__)
 app.blueprint(auth)
 
+
 @app.exception(NotFound)
 @app.exception(FileNotFound)
 async def not_found(request, exception):
@@ -28,6 +29,7 @@ app.static('/assets', './assets')
 app.static('/profile', './profile/index.html')
 app.static('/watch', './watch/index.html')
 app.static('/login', './login/index.html')
+app.static('/e', './e/index.html')
 
 
 if __name__ == "__main__":
