@@ -126,13 +126,13 @@ $().ready(function() {
 
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
-  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "e");
+  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "/e");
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
-  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "e#yt");
+  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "/e#yt");
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
-  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "e");
+  appendLargeBlock('a', 'b', 'c', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "/e");
   appendShortBlock('a', 'b', 'c', 'd', 'e', "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg", "https://files.catbox.moe/nrbq69.jpg");
   appendShortBlock('e', 'd', 'c', 'b', 'a', "https://files.catbox.moe/nrbq69.jpg", "https://cdn.discordapp.com/attachments/399292546854944772/422066928475963395/DXlCmv9VAAA9CDW.jpg");
 
