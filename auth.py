@@ -120,20 +120,20 @@ async def register(request):
     hsh = md5(a['n'] + a['p'] + a['u'] + a['e'])
 
     if a['c'] != hsh:
-        return return_cors(json, {'err': 'discrepancy between client and server'}, status=500)
+        return return_cors(json, {'err': 'discrepancy between client and server'}, status=400)
 
     async with auth.pool.acquire() as con:
         ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', a['n'])
     if len(ans) is 0:
-        return return_cors(json, {'err': 'nonce not found'}, status=500)  # no nonce was found for that endpoint and ip
+        return return_cors(json, {'err': 'nonce not found'}, status=400)  # no nonce was found for that endpoint and ip
     elif len(ans) > 1:
-        return return_cors(json, {'err': 'UHH'}, status=500)  # this shouldnt happen
+        return return_cors(json, {'err': 'UHH'}, status=400)  # this shouldnt happen
     elif ans[0]['endpoint'] != a['e']:
         return return_cors(json, {'err': 'nonce endpoint incorrect'},
-                    status=500)  # client tried to use a nonce for a different endpoint than it was intended for
+                    status=400)  # client tried to use a nonce for a different endpoint than it was intended for
     elif time.time() - ans[0]['time'] > 5:
         await expire_nonce(request.ip, "/auth/register")  # nonce is older than 5 seconds
-        return return_cors(json, {'err': 'nonce expired'}, status=500)
+        return return_cors(json, {'err': 'nonce expired'}, status=400)
 
     phash = bcrypt.hashpw(
         a['p'].encode('utf8'),
