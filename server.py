@@ -7,9 +7,11 @@ from help import HelpPage
 
 
 PORT = 8080
+
 app = Sanic(__name__)
 pool = DatabasePool()
 app.listener('before_server_start')(pool.register_db)
+
 Authentication(pool).register(app)
 HelpPage(pool).register(app)
 

@@ -1,20 +1,16 @@
-DROP TABLE nonces;
-DROP TABLE users;
-DROP TABLE help_pages;
-
-CREATE TABLE nonces (
+CREATE TABLE IF NOT EXISTS nonces (
   nonce TEXT,
   ip TEXT UNIQUE,
   endpoint TEXT,
   time TIMESTAMP
 );
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   userid TEXT UNIQUE,
   username TEXT,
   email TEXT UNIQUE,
   pass TEXT
 );
-CREATE TABLE help_pages (
+CREATE TABLE IF NOT EXISTS help_pages (
   id TEXT UNIQUE,
   file TEXT UNIQUE,
   edited TIMESTAMP
