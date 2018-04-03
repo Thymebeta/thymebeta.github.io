@@ -9,8 +9,8 @@ from sanic import response
 from .util.templating import template
 
 
-class HelpPage:
-    TIME_FORMAT = '%Y-%m-%d'
+class ArticleFactory:
+    DATE_FORMAT = '%Y-%m-%d'
     WPM = 200
 
     def __init__(self, pool):
@@ -18,7 +18,8 @@ class HelpPage:
         self.pool = pool
 
     def register(self, app):
-        app.add_route(self.get_page, 'help/<page>')
+        app.add_route(self.get_help_page, 'help/<page>')
+        app.add_route(self.get_blog_post, 'blog/<page>')
 
     def calculate_reading_time(self, text):
         words = start = 0
@@ -42,7 +43,20 @@ class HelpPage:
 
         return displayed
 
-    async def get_page(self, _, page):
+    async def get_blog_post(self, _, page):
+        async with self.pool.acquire() as con:
+            ans = await con.fetch('''SELECT * FROM blog_posts WHERE id = $1;''', page)
+
+        if len(ans) == 0:
+            resp = await response.file('static/404.html')
+            resp.status = 404
+            return resp
+        ans = ans[0]
+
+        date = ans["edited"].strftime(self.DATE_FORMAT)
+        return await self.get_page(f'dynamic/blog/{ans["file"]}', date, ans["author"])
+
+    async def get_help_page(self, _, page):
         async with self.pool.acquire() as con:
             ans = await con.fetch('''SELECT * FROM help_pages WHERE id = $1;''', page)
 
@@ -52,14 +66,18 @@ class HelpPage:
             return resp
         ans = ans[0]
 
-        if not os.path.exists(f'dynamic/help/{ans["file"]}'):
+        date = ans["edited"].strftime(self.DATE_FORMAT)
+        return await self.get_page(f'dynamic/help/{ans["file"]}', date)
+
+    async def get_page(self, page, date, author=None):
+        if not os.path.exists(page):
             resp = await response.file('static/404.html')
             resp.status = 500
             return resp
 
-        async with open_async(f'dynamic/help/{ans["file"]}') as _file:
+        async with open_async(page) as _file:
             markdown = await _file.read()
-        async with open_async('static/pages/help.tmpl') as _file:
+        async with open_async('static/pages/article.tmpl') as _file:
             template_ = await _file.read()
 
         title = markdown.split('\n')[0][2:]
@@ -67,7 +85,10 @@ class HelpPage:
         markdown = markdown.split('\n', 1)[-1]
 
         html_md = f'<h1>{title}</h1>'
-        html_md += f'<div id="metadata"> {reading_time} - Last edited {ans["edited"].strftime(self.TIME_FORMAT)}</div>'
+        if author is None:
+            html_md += f'<div id="metadata"> {reading_time} - Last edited {date}</div>'
+        else:
+            html_md += f'<div id="metadata"> {reading_time} - {author} - Last edited {date}</div>'
         html_md += self.md_parser.convert(markdown)
 
         html = template(template_, title=title, content=html_md)

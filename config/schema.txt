@@ -4,15 +4,23 @@ CREATE TABLE IF NOT EXISTS nonces (
   endpoint TEXT,
   time TIMESTAMP
 );
+
 CREATE TABLE IF NOT EXISTS users (
   userid TEXT UNIQUE,
   username TEXT,
   email TEXT UNIQUE,
   pass TEXT
 );
+
 CREATE TABLE IF NOT EXISTS help_pages (
   id TEXT UNIQUE,
   file TEXT UNIQUE,
   edited TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS blog_posts (
+  id TEXT UNIQUE,
+  file TEXT UNIQUE,
+  author TEXT,
+  edited TIMESTAMP
+);

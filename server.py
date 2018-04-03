@@ -3,7 +3,7 @@ from sanic.exceptions import NotFound, FileNotFound
 
 from modules.util.postgres import DatabasePool
 from modules.auth import Authentication
-from modules.help import HelpPage
+from modules.articles import ArticleFactory
 
 
 PORT = 8080
@@ -13,7 +13,7 @@ pool = DatabasePool()
 app.listener('before_server_start')(pool.register_db)
 
 Authentication(pool).register(app)
-HelpPage(pool).register(app)
+ArticleFactory(pool).register(app)
 
 
 @app.exception(NotFound)
