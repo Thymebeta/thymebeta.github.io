@@ -50,7 +50,7 @@ $(function() {
     article.empty();
 
     $.ajax({
-        url: "pages/" + getUrlParameter("pagec") + ".md",
+        url: "pages/" + getUrlParameter("page") + ".md",
         success: function(data) {
             let html_data = new showdown.Converter().makeHtml(data);
             article.append($(html_data).first());
