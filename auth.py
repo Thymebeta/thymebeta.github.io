@@ -74,7 +74,6 @@ async def getnonce(request):
     i  ip       GET /api/auth/getip
 
     """
-    print(request.raw_args)
     try:
         tme = request.raw_args['t']
         hsh = request.raw_args['h']
@@ -126,15 +125,13 @@ async def register(request):
         return return_cors(json, {'err': 'discrepancy between client and server'}, status=400)
     '''
     async with auth.pool.acquire() as con:
-        print(con)
         ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', a['n'])
-        print(ans)
 
     if len(ans) == 0:
         return return_cors(json, {'err': 'nonce not found'}, status=400)  # no nonce was found for that endpoint and ip
     elif len(ans) > 1:
         return return_cors(json, {'err': 'UHH'}, status=400)  # this shouldnt happen
-    elif ans[0]['endpoint'] != a['e']:
+    elif ans[0]['endpoint'] != '/auth/register':
         return return_cors(json, {'err': 'nonce endpoint incorrect'},
                     status=400)  # client tried to use a nonce for a different endpoint than it was intended for
     elif datetime.now() - ans[0]['time'] > timedelta(seconds=5):
