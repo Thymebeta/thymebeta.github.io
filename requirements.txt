@@ -2,3 +2,5 @@ asyncpg>=0.15.0
 bcrypt>=3.1.4
 sanic>=0.7.0
 uvloop>=0.9.1
+aiofiles>=0.3.2
+markdown2>=2.3.5
