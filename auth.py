@@ -2,6 +2,7 @@ import hashlib
 import time
 import asyncio
 import bcrypt
+import asyncpg
 
 from sanic import Blueprint
 from sanic.response import json
@@ -143,9 +144,12 @@ async def register(request):
         bcrypt.gensalt()
     ).decode()  # this is where the magic happens - generate the hash for the password
     async with auth.pool.acquire() as con:
-        await con.execute(
-            '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING''',
-            get_snowflake(), a['u'], a['e'], phash
-        )
+        try:
+            await con.execute(
+                '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
+                get_snowflake(), a['u'], a['e'], phash
+            )
+        except asyncpg.exceptions.UniqueViolationError:
+            return return_cors(json, {'err': 'already taken'}, status=403)
 
     return return_cors(json, {'username': a['u']})
