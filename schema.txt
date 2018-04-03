@@ -1,0 +1,22 @@
+DROP TABLE nonces;
+DROP TABLE users;
+DROP TABLE help_pages;
+
+CREATE TABLE nonces (
+  nonce TEXT,
+  ip TEXT UNIQUE,
+  endpoint TEXT,
+  time TIMESTAMP
+);
+CREATE TABLE users (
+  userid TEXT UNIQUE,
+  username TEXT,
+  email TEXT UNIQUE,
+  pass TEXT
+);
+CREATE TABLE help_pages (
+  id TEXT UNIQUE,
+  file TEXT UNIQUE,
+  edited TIMESTAMP
+);
+

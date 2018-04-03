@@ -1,11 +1,14 @@
-from auth import auth
 from sanic import Sanic, response
 from sanic.exceptions import NotFound, FileNotFound
+
+from auth import auth
+from help import HelpPage
 
 
 PORT = 8080
 app = Sanic(__name__)
 app.blueprint(auth)
+HelpPage().register(app)
 
 
 @app.exception(NotFound)
