@@ -144,7 +144,7 @@ async def register(request):
     ).decode()  # this is where the magic happens - generate the hash for the password
     async with auth.pool.acquire() as con:
         await con.execute(
-            '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
+            '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING''',
             get_snowflake(), a['u'], a['e'], phash
         )
 
