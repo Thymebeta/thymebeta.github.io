@@ -1,5 +1,5 @@
 # Licensing your work
-![banner](https://privacy-sfb.cispa.saarland/wp-content/uploads/sites/10/2015/12/dummy-header.jpg)
+![banner](../assets/license.png)
 
 > "Whew," you think to yourself, "that first publicity setting was actually
 > pretty easy." But then you look down, and to your horror, there's another
@@ -45,12 +45,3 @@ Under the following terms:
 
 For more info, read the deed at [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
 or the legal text at [https://creativecommons.org/licenses/by/4.0/legalcode](https://creativecommons.org/licenses/by/4.0/legalcode)
-
-
-![banner](https://privacy-sfb.cispa.saarland/wp-content/uploads/sites/10/2015/12/dummy-header.jpg)
-Sorry, just felt like putting the dummy banner again.
-
----
-
-This part of the page is where the footer would go, but I don't feel like making one right now.
-Bye.
