@@ -1,6 +1,5 @@
 import hashlib
 import time
-import asyncio
 import bcrypt
 import asyncpg
 
@@ -8,7 +7,7 @@ from sanic import Blueprint
 from sanic.response import json
 from sanic.exceptions import abort
 
-from asyncpg import connect, create_pool
+from asyncpg import create_pool
 from datetime import datetime, timedelta
 
 auth = Blueprint('auth', url_prefix='/auth')
@@ -19,8 +18,8 @@ async def expire_nonce(ip, endp):
         await con.execute('''DELETE FROM nonces WHERE ip = $1 AND endpoint = $2;''', ip, endp)
 
 
-def return_cors(function, *args, **kwargs):
-    return function(*args, **kwargs, headers={'Access-Control-Allow-Origin': '*'})
+def return_cors(func, *args, **kwargs):
+    return func(*args, **kwargs, headers={'Access-Control-Allow-Origin': '*'})
 
 
 def md5(data):
@@ -85,10 +84,9 @@ async def getnonce(request):
         return
 
     check = md5(tme + request.ip)  # generate server check hash
-    """
     if check != hsh:
         return return_cors(json, {'err': 'discrepancy between client and server hash (possibly wrong IP)'}, status=500)
-    """
+
     nonce = md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
     await expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
     async with auth.pool.acquire() as con:
@@ -121,10 +119,9 @@ async def register(request):
     a = request.form
     a = {k: v[0] for k, v in a.items()}
     hsh = md5(a['n'] + a['p'] + a['u'] + a['e'])
-    '''
     if a['c'] != hsh:
         return return_cors(json, {'err': 'discrepancy between client and server'}, status=400)
-    '''
+
     async with auth.pool.acquire() as con:
         ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', a['n'])
 
@@ -133,8 +130,10 @@ async def register(request):
     elif len(ans) > 1:
         return return_cors(json, {'err': 'UHH'}, status=400)  # this shouldnt happen
     elif ans[0]['endpoint'] != '/auth/register':
-        return return_cors(json, {'err': 'nonce endpoint incorrect'},
-                    status=400)  # client tried to use a nonce for a different endpoint than it was intended for
+        return return_cors(
+            json, {'err': 'nonce endpoint incorrect'},
+            status=400
+        )  # client tried to use a nonce for a different endpoint than it was intended for
     elif datetime.now() - ans[0]['time'] > timedelta(seconds=5):
         await expire_nonce(request.ip, "/auth/register")  # nonce is older than 5 seconds
         return return_cors(json, {'err': 'nonce expired'}, status=400)
