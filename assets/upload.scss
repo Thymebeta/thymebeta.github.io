@@ -10,6 +10,7 @@
 
 #upload-region {
   width: 100%;
+  height: 400px;
   min-height: 400px;
   background-color: #fff;
 
@@ -18,7 +19,7 @@
 
   position: relative;
 
-  transition: min-height 0.5s ease;
+  transition: height 0.5s ease, min-height 0.5s ease;
 }
 
 #middle-logo {
@@ -59,11 +60,9 @@
 }
 
 #uploading {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  right: 10px;
-  bottom: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
 }
 #upload-bar {
   width: 100%;
@@ -194,6 +193,79 @@
 .tab.active {
   border-bottom: 3px solid #466c26;
 }
+
+#video-thumb {
+  width: 230px;
+  height: 130px;
+  background-color: #000;
+  margin-right: 10px;
+}
+#sb-sub {
+  margin-top: 10px;
+  margin-right: 10px;
+  font-size: 13px;
+  color: #444;
+}
+#sb-sub>a {
+  color: #3a5a20;
+}
+
+.dd-parent {
+  font-size: 13px;
+  position: relative;
+
+  margin: 10px 0;
+}
+select {
+  background-color: #fbfbfb;
+  border: 1px solid #ddd;
+  width: 100%;
+  height: 30px;
+  padding: 0 5px;
+  line-height: 30px;
+  color: #5C616C;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.dd-parent:after {
+  content: "";
+  border: solid #5C616C;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  right: 15px;
+  top: 8px;
+  pointer-events: none;
+  line-height: 30px;
+}
+.dd-parent>a {
+  color: #3a5a20;
+  font-size: 12px;
+}
+select::-ms-expand {
+  display: none;
+}
+select:focus {
+  border: 1px solid #999;
+}
+select:focus-within {
+  border: 1px solid #999;
+  outline: none !important;
+}
+select:-moz-focusring {
+  outline: none !important;
+  color: transparent;
+  text-shadow: 0 0 0 #5C616C;
+}
+
 
 .btn {
   padding: 15px;

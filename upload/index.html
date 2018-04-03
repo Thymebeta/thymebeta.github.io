@@ -67,22 +67,39 @@
                 </div>
 
                 <div id="uploading" style="display: none" class="fb">
-                    <div id="uploading-sidebar"></div>
-                    <div id="uploading-main">
+                    <div id="uploading-sidebar">
+                        <div id="video-thumb"></div>
+                        <p id="sb-sub">The uploader dialogue is a work in progress.<br><br>Your video will be available at <a href="">thyme.co/abcd</a> when processing is finished.<br><br><br><a href="">Learn more</a></p>
+                    </div>
+                    <div id="uploading-main" class="fc">
                         <div class="fb">
                             <div id="upload-bar"><span>Uploading | 3%</span><div id="u-bar-progress">Uploading | 3%</div></div>
-                            <div class="btn il-btn">Release</div>
+                            <div class="btn il-btn">Post</div>
                         </div>
                         <div id="tabs">
-                            <div class="tab active">Details</div>
-                            <div class="tab">Some crap</div>
-                            <div class="tab">More crap</div>
-                            <div class="tab">Enough crap already</div>
+                            <div id="details-tab" class="tab active">Details</div>
+                            <div id="privacy-tab" class="tab">Privacy</div>
                         </div>
+
                         <input type="text" id="title" placeholder="Title" title="Video Title"/>
-                        <textarea placeholder="Description" rows="4" title="Video Description" id="description"></textarea>
-                        <div id="tags">
-                            <input id="current-tag" placeholder="Add a tag" />
+                        <textarea class="fg" placeholder="Description" rows="4" title="Video Description" id="description"></textarea>
+                        <div id="tags"><input id="current-tag" placeholder="Add a tag"/></div>
+
+                        <div style="display:none" class="dd-parent" id="privacy-dd">
+                            <select title="Privacy settings">
+                                <option value="pub">Public (Anyone can find this video)</option>
+                                <option value="unl">Link only (A link is needed to find this video)</option>
+                                <option value="pri">Private (Only you can watch this video)</option>
+                            </select>
+                            <a href="">Which do I want?</a>
+                        </div>
+
+                        <div style="display:none" class="dd-parent" id="license-dd">
+                            <select title="License settings">
+                                <option value="nl">No License</option>
+                                <option value="cc">Creative Commons CC BY</option>
+                            </select>
+                            <a href="">Should I use a license?</a>
                         </div>
                     </div>
                 </div>
