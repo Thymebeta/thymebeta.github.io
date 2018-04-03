@@ -1,10 +1,12 @@
 import math
 import os
 
+import markdown2
+
 from aiofiles import open as open_async
 from sanic import response
 
-import markdown2
+from templating import template
 
 
 class HelpPage:
@@ -58,7 +60,7 @@ class HelpPage:
         async with open_async(f'help/{ans["file"]}') as _file:
             markdown = await _file.read()
         async with open_async('help/index.tmpl') as _file:
-            template = await _file.read()
+            template_ = await _file.read()
 
         title = markdown.split('\n')[0][2:]
         reading_time = self.calculate_reading_time(markdown)
@@ -68,6 +70,6 @@ class HelpPage:
         html_md += f'<div id="metadata"> {reading_time} - Last edited {ans["edited"].strftime(self.TIME_FORMAT)}</div>'
         html_md += self.md_parser.convert(markdown)
 
-        html = template.replace('{{ title }}', title).replace('{{ content }}', html_md)
+        html = template(template_, title=title, content=html_md)
 
         return response.html(html, status=200)
