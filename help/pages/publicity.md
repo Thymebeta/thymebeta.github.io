@@ -1,5 +1,5 @@
 # Video publicity
-![banner](https://privacy-sfb.cispa.saarland/wp-content/uploads/sites/10/2015/12/dummy-header.jpg)
+![banner](../assets/publicity.png)
 
 > So you've just finished you new video and you're excited to get it out there,
 > but while uploading, you notice a little tab titled `Privacy`. You click it,
