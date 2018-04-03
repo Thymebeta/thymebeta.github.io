@@ -20,7 +20,7 @@ class DatabasePool:
         await self.populate_db()
 
     async def populate_db(self):
-        async with open_async('schema.txt') as _file:
+        async with open_async('config/schema.txt') as _file:
             schema = await _file.read()
 
         async with self.acquire() as con:

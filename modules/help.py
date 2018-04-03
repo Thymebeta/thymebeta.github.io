@@ -6,7 +6,7 @@ import markdown2
 from aiofiles import open as open_async
 from sanic import response
 
-from templating import template
+from .util.templating import template
 
 
 class HelpPage:
@@ -47,19 +47,19 @@ class HelpPage:
             ans = await con.fetch('''SELECT * FROM help_pages WHERE id = $1;''', page)
 
         if len(ans) == 0:
-            resp = await response.file('404.html')
+            resp = await response.file('static/404.html')
             resp.status = 404
             return resp
         ans = ans[0]
 
-        if not os.path.exists(f'help/{ans["file"]}'):
-            resp = await response.file('404.html')
+        if not os.path.exists(f'dynamic/help/{ans["file"]}'):
+            resp = await response.file('static/404.html')
             resp.status = 500
             return resp
 
-        async with open_async(f'help/{ans["file"]}') as _file:
+        async with open_async(f'dynamic/help/{ans["file"]}') as _file:
             markdown = await _file.read()
-        async with open_async('help/index.tmpl') as _file:
+        async with open_async('static/pages/help.tmpl') as _file:
             template_ = await _file.read()
 
         title = markdown.split('\n')[0][2:]

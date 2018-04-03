@@ -1,9 +1,9 @@
 from sanic import Sanic, response
 from sanic.exceptions import NotFound, FileNotFound
 
-from postgres import DatabasePool
-from auth import Authentication
-from help import HelpPage
+from modules.util.postgres import DatabasePool
+from modules.auth import Authentication
+from modules.help import HelpPage
 
 
 PORT = 8080
@@ -19,20 +19,21 @@ HelpPage(pool).register(app)
 @app.exception(NotFound)
 @app.exception(FileNotFound)
 async def not_found(request, exception):
-    return await response.file('404.html')
+    return await response.file('static/404.html')
 
 
 @app.route("/", methods=["GET"])
 async def serve_file(_):
-    return await response.file('index.html')
+    return await response.file('static/index.html')
 
 
-app.static('/assets', './assets')
-app.static('/profile', './profile/index.html')
-app.static('/upload', './upload/index.html')
-app.static('/watch', './watch/index.html')
-app.static('/login', './login/index.html')
-app.static('/e', './e/index.html')
+app.static('/assets', 'static/assets')
+app.static('/profile', 'static/profile/index.html')
+app.static('/upload', 'static/upload/index.html')
+app.static('/watch', 'static/watch/index.html')
+app.static('/login', 'static/login/index.html')
+app.static('/e', 'static/e/index.html')
+app.static('favicon.ico', 'static/favicon.ico')
 
 
 if __name__ == "__main__":

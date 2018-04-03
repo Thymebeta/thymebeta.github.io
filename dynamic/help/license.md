@@ -1,5 +1,5 @@
 # Licensing your work
-![banner](../assets/license.png)
+![banner](../assets/img/license.png)
 
 > "Whew," you think to yourself, "that first publicity setting was actually
 > pretty easy." But then you look down, and to your horror, there's another

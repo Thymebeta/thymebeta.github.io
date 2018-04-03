@@ -1,5 +1,5 @@
 # Video publicity
-![banner](../assets/publicity.png)
+![banner](../assets/img/publicity.png)
 
 > So you've just finished you new video and you're excited to get it out there,
 > but while uploading, you notice a little tab titled `Privacy`. You click it,
