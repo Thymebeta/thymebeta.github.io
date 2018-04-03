@@ -16,6 +16,7 @@ Your work is important to us - our site exists for the sole purpose of allowing
 you to share it, so we offer the option to license your work and protect it.
 
 We currently offer two license choices:
+
 * `No License`
 * `Creative Commons CC BY`
 
