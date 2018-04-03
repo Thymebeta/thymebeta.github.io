@@ -47,7 +47,7 @@ $(function() {
     });
     $("div").on(clickH, "#continue-btn:not(.disabled)", function(e) {
         $("#central-column").css({"max-width": "100%"});
-        $("#upload-region").css({"min-height": "100%"});
+        $("#upload-region").css({"min-height": "100%", "height": "100%"});
         $("#title").val(target_file.name);
 
         $("#upload-bar>span").text("Uploading | 0%");
@@ -108,7 +108,26 @@ $(function() {
         }
     });
     $(document).on(clickH, ".tag-close", function() {
-        console.log("o/");
         $(this).parent().remove();
+    });
+
+    $("#details-tab").on(clickH, function() {
+        $("#privacy-dd").hide();
+        $("#license-dd").hide();
+
+        $("#title").show();
+        $("#description").show();
+        $("#tags").show();
+        $("#details-tab").addClass("active");
+        $("#privacy-tab").removeClass("active");
+    });
+    $("#privacy-tab").on(clickH, function() {
+        $("#privacy-dd").show();
+        $("#license-dd").show();
+        $("#title").hide();
+        $("#description").hide();
+        $("#tags").hide();
+        $("#details-tab").removeClass("active");
+        $("#privacy-tab").addClass("active");
     });
 });
