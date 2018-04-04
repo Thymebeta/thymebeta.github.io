@@ -6,7 +6,7 @@ import asyncpg
 from datetime import datetime, timedelta
 
 from sanic.exceptions import abort
-from sanic.response import json
+from sanic.response import json, HTTPResponse
 
 
 class Authentication:
@@ -37,6 +37,7 @@ class Authentication:
         get('getip', self.getip)
         get('getnonce', self.getnonce)
         post('register', self.register_ep)
+        post('login', self.login)
 
     async def expire_nonce(self, ip, endp):
         async with self.pool.acquire() as con:
@@ -57,6 +58,29 @@ class Authentication:
         TODO: make this better
         """
         return str(time.time()).replace('.', '')
+
+    async def check_nonce(self, ip, nonce, endpoint):
+        async with self.pool.acquire() as con:
+            ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', nonce)
+
+        if len(ans) == 0:
+            raise ValueError(404, 'nonce not found')  # no nonce was found for that endpoint and ip
+        elif len(ans) > 1:
+            raise ValueError(400, 'UHH')  # this shouldnt happen
+        elif ans[0]['endpoint'] != endpoint:
+            # client tried to use a nonce for a different endpoint than it was intended for
+            raise ValueError(400, 'nonce endpoint incorrect')
+        elif datetime.now() - ans[0]['time'] > timedelta(seconds=5):
+            await self.expire_nonce(ip, endpoint)  # nonce is older than 5 seconds
+            return json(400, 'nonce expired')
+
+    def get_form(self, request):
+        """
+        Get the form from a response
+        :param request:
+        :return:
+        """
+        return {k: v[0] for k, v in request.form.items()}
 
     async def ping(self, _):
         """
@@ -128,25 +152,15 @@ class Authentication:
         c hash      hash(nonce || password || username || email)
 
         """
-        a = request.form
-        a = {k: v[0] for k, v in a.items()}
+        a = self.get_form(request)
+        try:
+            self.check_nonce(request.ip, a['n'], '/auth/register')
+        except ValueError as e:
+            return json({'err': e.args[1]}, status=e.args[0])
+
         hsh = self.md5(a['n'] + a['p'] + a['u'] + a['e'])
         if a['c'] != hsh:
             return json({'err': 'discrepancy between client and server'}, status=400)
-
-        async with self.pool.acquire() as con:
-            ans = await con.fetch('''SELECT * FROM nonces WHERE nonce = $1;''', a['n'])
-
-        if len(ans) == 0:
-            return json({'err': 'nonce not found'}, status=400)  # no nonce was found for that endpoint and ip
-        elif len(ans) > 1:
-            return json({'err': 'UHH'}, status=400)  # this shouldnt happen
-        elif ans[0]['endpoint'] != '/auth/register':
-            # client tried to use a nonce for a different endpoint than it was intended for
-            return json({'err': 'nonce endpoint incorrect'}, status=400)
-        elif datetime.now() - ans[0]['time'] > timedelta(seconds=5):
-            await self.expire_nonce(request.ip, "/auth/register")  # nonce is older than 5 seconds
-            return json({'err': 'nonce expired'}, status=400)
 
         phash = bcrypt.hashpw(
             a['p'].encode('utf8'),
@@ -162,3 +176,43 @@ class Authentication:
                 return json({'err': 'already taken'}, status=403)
 
         return json({'username': a['u']})
+
+    async def login(self, request):
+        """
+        POST URL/auth/login
+
+        login endpoint
+
+        args:
+        n nonce     the nonce the client just asked for (GET /auth/getnonce)
+        p password  the proposed password for the user
+        e email     the email for the user
+        c hash      hash(nonce || password || email)
+
+        """
+        a = self.get_form(request)
+        try:
+            self.check_nonce(request.ip, a['n'], '/auth/login')
+        except ValueError as e:
+            return json(e.args[1], status=e.args[0])
+
+        hsh = self.md5(a['n'] + a['p'] + a['e'])
+        if a['c'] != hsh:
+            return json({'err': 'discrepancy between client and server'}, status=400)
+
+        async with self.pool.acquire() as con:
+            users = await con.fetch('''SELECT * FROM users WHERE email = $1;''', a['e'])
+
+        if len(users) == 0:
+            # no user with email found
+            return json({'err': 'User not found'}, status=404)
+
+        user = users[0]
+        if bcrypt.checkpw(a['p'], user['pass']):
+            request['session']['authenticated'] = True
+            request['session']['user'] = user['userid']
+            return HTTPResponse()
+        else:
+            request['session']['authenticated'] = False
+            return HTTPResponse(status=400)
+
