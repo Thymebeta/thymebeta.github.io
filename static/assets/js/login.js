@@ -1,7 +1,7 @@
 $(function (){
-    var $pwd = $("#pwd");
-    var $uname = $("#uname");
-    var mode = 0;
+    let $pwd = $("#pwd");
+    let $uname = $("#uname");
+    let mode = 0;
     $("#login-box").submit(function () {
         if (mode === 0) {
             $pwd.effect("shake", {distance: 2});

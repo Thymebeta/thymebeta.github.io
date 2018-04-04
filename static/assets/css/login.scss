@@ -12,7 +12,6 @@ html, body {
   height: 100%;
   display: block;
 }
-
 #login-box {
   position: absolute;
   left: 50%;
@@ -30,7 +29,6 @@ html, body {
 
   box-shadow: 1px 2px 2px #000;
 }
-
 #top-lab {
   font-size: 1.5em;
   line-height: 2em;
@@ -51,6 +49,19 @@ input {
 .field.error {
   border: 1px solid #bd2600;
   color: #bd2600;
+}
+
+label {
+  font-size: 0.8em;
+  color: #777;
+  margin: 4px 0;
+}
+label>span {
+  margin-left: 4px;
+}
+label>input {
+  margin: 0;
+  height: 100%;
 }
 
 .btn {

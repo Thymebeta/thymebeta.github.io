@@ -123,7 +123,7 @@ class Authentication:
 
         check = self.md5(tme + request.ip)  # generate server check hash
         if check != hsh:
-            return json({'err': 'discrepancy between client and server hash (possibly wrong IP)'}, status=500)
+            return json({'err': 'Discrepancy between client and server hash (possibly wrong IP)'}, status=500)
 
         nonce = self.md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
         await self.expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
@@ -154,13 +154,13 @@ class Authentication:
         """
         a = self.get_form(request)
         try:
-            self.check_nonce(request.ip, a['n'], '/auth/register')
+            await self.check_nonce(request.ip, a['n'], '/auth/register')
         except ValueError as e:
             return json({'err': e.args[1]}, status=e.args[0])
 
         hsh = self.md5(a['n'] + a['p'] + a['u'] + a['e'])
         if a['c'] != hsh:
-            return json({'err': 'discrepancy between client and server'}, status=400)
+            return json({'err': 'Discrepancy between client and server'}, status=400)
 
         phash = bcrypt.hashpw(
             a['p'].encode('utf8'),
@@ -173,7 +173,7 @@ class Authentication:
                     self.get_snowflake(), a['u'], a['e'], phash
                 )
             except asyncpg.exceptions.UniqueViolationError:
-                return json({'err': 'already taken'}, status=403)
+                return json({'err': 'Email already in use'}, status=403)
 
         return json({'username': a['u']})
 
@@ -192,27 +192,27 @@ class Authentication:
         """
         a = self.get_form(request)
         try:
-            self.check_nonce(request.ip, a['n'], '/auth/login')
+            await self.check_nonce(request.ip, a['n'], '/auth/login')
         except ValueError as e:
             return json(e.args[1], status=e.args[0])
 
         hsh = self.md5(a['n'] + a['p'] + a['e'])
         if a['c'] != hsh:
-            return json({'err': 'discrepancy between client and server'}, status=400)
+            return json({'err': 'Discrepancy between client and server'}, status=400)
 
         async with self.pool.acquire() as con:
             users = await con.fetch('''SELECT * FROM users WHERE email = $1;''', a['e'])
 
         if len(users) == 0:
             # no user with email found
-            return json({'err': 'User not found'}, status=404)
+            return json({'err': 'Incorrect email or password'}, status=404)
 
         user = users[0]
-        if bcrypt.checkpw(a['p'], user['pass']):
+        if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
             request['session']['authenticated'] = True
             request['session']['user'] = user['userid']
-            return HTTPResponse()
+            return json({'err': ''}, status=200)
         else:
             request['session']['authenticated'] = False
-            return HTTPResponse(status=400)
+            return json({'err': 'Incorrect email or password'}, status=400)
 

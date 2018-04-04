@@ -51,10 +51,28 @@ function register(username, password, email, after) {
         })
     });
 }
+function login(email, password, after) {
+    let endpoint = "auth/login";
+    getNonce(endpoint, function(nonce) {
+        $.post({
+            dataType: "json",
+            url: FULL_URL + endpoint,
+            data: {
+                n: nonce,
+                p: password,
+                e: email,
+                c: md5(nonce + password + email)
+            },
+            success: function(data) {
+                after(data);
+            }
+        })
+    });
+}
 
-getIP(function(ip) {console.log(ip)});
-getNonce("auth", function(nonce) {console.log(nonce)});
-register("username", "pass", "email", function(d) {console.log(d)});
+//getIP(function(ip) {console.log(ip)});
+//getNonce("auth", function(nonce) {console.log(nonce)});
+//login("email", "paaass", function(d) {console.log(d)});
 
 $(function() {
     var clickH = "mousedown tap";
