@@ -1,27 +1,38 @@
 import hashlib
 import time
-import bcrypt
+import re
+
 import asyncpg
+import bcrypt
 
 from datetime import datetime, timedelta
 from collections import defaultdict
 
 from sanic.exceptions import abort
-from sanic.response import json, HTTPResponse
+from sanic.response import json
+from zxcvbn import zxcvbn
 
 
 class Authentication:
+    EMAIL_RE = re.compile(r'[^@ \r\n\t]+@([^@ \r\n\t]+?\.[^@\W]+)')
+    ALLOW_CROSS_ORIGIN = True
+    PASSWORD_THRESH = 3
     BASE = 'auth/'
-    CORS = True
 
     def __init__(self, pool):
         self.pool = pool
+
+        try:
+            with open('config/email_blacklist.txt') as _file:
+                self.email_blacklist = _file.read().lower().split('\n')
+        except FileNotFoundError:
+            self.email_blacklist = []
 
     def register(self, app):
         def get(endpoint, func):
             async def wrapper(*args, **kwargs):
                 response = await func(*args, **kwargs)
-                if self.CORS:
+                if self.ALLOW_CROSS_ORIGIN:
                     response.headers['Access-Control-Allow-Origin'] = '*'
                 return response
             app.get(self.BASE + endpoint)(wrapper)
@@ -29,24 +40,20 @@ class Authentication:
         def post(endpoint, func):
             async def wrapper(*args, **kwargs):
                 response = await func(*args, **kwargs)
-                if self.CORS:
+                if self.ALLOW_CROSS_ORIGIN:
                     response.headers['Access-Control-Allow-Origin'] = '*'
                 return response
             app.post(self.BASE + endpoint)(wrapper)
 
         get('ping', self.ping)
-        get('getip', self.getip)
-        get('getnonce', self.getnonce)
+        get('getip', self.get_ip)
+        get('getnonce', self.get_nonce)
         post('register', self.register_ep)
         post('login', self.login)
 
     async def expire_nonce(self, ip, endp):
         async with self.pool.acquire() as con:
             await con.execute('''DELETE FROM nonces WHERE ip = $1 AND endpoint = $2;''', ip, endp)
-
-    @staticmethod
-    def return_cors(func, *args, **kwargs):
-        return func(*args, **kwargs, headers={'Access-Control-Allow-Origin': '*'})
 
     @staticmethod
     def md5(data):
@@ -75,7 +82,8 @@ class Authentication:
             await self.expire_nonce(ip, endpoint)  # nonce is older than 5 seconds
             return json(400, 'nonce expired')
 
-    def get_form(self, request):
+    @staticmethod
+    def get_form(request):
         """
         Get the form from a response
         :param request:
@@ -86,7 +94,8 @@ class Authentication:
             rtn[k] = v[0]
         return rtn
 
-    async def ping(self, _):
+    @staticmethod
+    async def ping(_):
         """
         GET URL/auth/ping
 
@@ -95,15 +104,16 @@ class Authentication:
 
         return json({"time": time.time()})
 
-    async def getip(self, request):
+    @staticmethod
+    async def get_ip(request):
         """
         GET URL/auth/getip
 
         returns ip of requester
         """
-        return self.return_cors(json, {"ip": request.ip})
+        return json({"ip": request.ip})
 
-    async def getnonce(self, request):
+    async def get_nonce(self, request):
         """
         GET URL/auth/getnonce
 
@@ -166,6 +176,21 @@ class Authentication:
         if a['c'] != hsh:
             return json({'err': 'Discrepancy between client and server'}, status=400)
 
+        email_match = self.EMAIL_RE.search(a['e'])
+        if not email_match:
+            return json({'err': 'Invalid email'}, status=400)
+        if email_match[1].lower() in self.email_blacklist:
+            return json({'err': 'Invalid email'}, status=400)
+
+        if len(a['u']) <= 4:
+            return json({'err': 'Username must be longer than 4 characters'}, status=400)
+        if not a['p']:
+            return json({'err': 'Password required'}, status=400)
+
+        password_check = zxcvbn(a['p'], user_inputs=[a['e'], a['e'].split('@')[0], a['u']])
+        if password_check['score'] < self.PASSWORD_THRESH:
+            return json({'err': 'Password insecure'}, status=400)
+
         phash = bcrypt.hashpw(
             a['p'].encode('utf8'),
             bcrypt.gensalt()
@@ -219,4 +244,3 @@ class Authentication:
 
         request['session']['authenticated'] = False
         return json({'err': 'Incorrect email or password'}, status=400)
-
