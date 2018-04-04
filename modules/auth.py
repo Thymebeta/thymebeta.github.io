@@ -1,3 +1,4 @@
+import urllib.parse
 import hashlib
 import time
 import re
@@ -6,11 +7,31 @@ import asyncpg
 import bcrypt
 
 from datetime import datetime, timedelta
+from functools import partial, wraps
 from collections import defaultdict
+from inspect import isawaitable
 
 from sanic.exceptions import abort
-from sanic.response import json
+from sanic.response import json, redirect
 from zxcvbn import zxcvbn
+
+
+def login_required(route=None):
+    if route is None:
+        return partial(login_required)
+
+    @wraps(route)
+    async def privileged(request, *args, **kwargs):
+        if not request['session'].get('authenticated', False):
+            return redirect('/login?redirect=' + urllib.parse.quote_plus(request.path))
+
+        resp = route(request, *args, **kwargs)
+
+        if isawaitable(resp):
+            resp = await resp
+        return resp
+
+    return privileged
 
 
 class Authentication:

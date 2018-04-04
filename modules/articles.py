@@ -130,6 +130,9 @@ class ArticleFactory:
             html_md += f'<div id="metadata"> {reading_time} - {author} - Last edited {date}</div>'
         html_md += self.md_parser.convert(markdown)
 
-        html = template(template_, title=title, content=html_md)
+        async with open_async('static/page_header.tmpl') as _file:
+            page_header = await _file.read()
+
+        html = template(template_, title=title, content=html_md, header=page_header)
 
         return response.html(html, status=200)

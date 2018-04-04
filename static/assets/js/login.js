@@ -1,4 +1,7 @@
 $(function (){
+    let search = location.search.substring(1);
+    let url_param = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+
     let $pwd = $("#pwd");
     let $uname = $("#uname");
     let $r_uname = $("#r-uname");
@@ -15,13 +18,16 @@ $(function (){
             $("#login-box *").prop("disabled", true);
 
             login($uname.val(), $pwd.val(), function(data){
-                $("#login-box").removeClass("disabled");
-                $("#login-box *").prop("disabled", false);
-
                 if (data["err"]) {
+                    $("#login-box").removeClass("disabled");
+                    $("#login-box *").prop("disabled", false);
                     $("#error").text(data["err"]).show().effect("shake", {distance: 2});
                 } else {
-                    alert("Nice one");
+                    if (url_param.redirect) {
+                        window.location.href = url_param.redirect;
+                    } else {
+                        window.location.href = '/';
+                    }
                 }
             });
         } else if (mode === 1) {
@@ -32,13 +38,18 @@ $(function (){
                 $("#login-box *").prop("disabled", true);
 
                 register($r_uname.val(), $r_pwd.val(), $r_email.val(), function (data) {
-                    $("#login-box").removeClass("disabled");
-                    $("#login-box *").prop("disabled", false);
-
                     if (data["err"]) {
+                        $("#login-box").removeClass("disabled");
+                        $("#login-box *").prop("disabled", false);
                         $("#error").text(data["err"]).show().effect("shake", {distance: 2});
                     } else {
-                        alert("Registered! Noice.");
+                        login($r_email.val(), $r_pwd.val(), function() {
+                            if (url_param.redirect) {
+                                window.location.href = url_param.redirect;
+                            } else {
+                                window.location.href = '/';
+                            }
+                        });
                     }
                 });
             }

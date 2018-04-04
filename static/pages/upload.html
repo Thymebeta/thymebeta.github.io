@@ -16,42 +16,7 @@
 </head>
 <body>
 <div class="page-container">
-    <div class="header-bar nomobile">
-        <div class="header-logo cursive">Thyme</div>
-        <div class="nav-links fg">
-            <div class="nav-link">Browse</div>
-            <div class="nav-link">You get the idea</div>
-            <div class="nav-link">Something else</div>
-
-            <div class="search-pad">
-                <div class="search">
-                    <span class="fa fa-search"></span>
-                    <input placeholder="Search" type="text">
-                </div>
-            </div>
-        </div>
-        <div class="nav-buttons">
-            <div class="nav-button"><div class="btn-txt">Log in</div></div>
-            <div class="nav-button"><div class="btn-txt">Sign up</div></div>
-        </div>
-    </div>
-    <div class="caption-bar nomobile">
-        <div class="caption-text">You are not signed in! You will be unable to save or upload <span class="cursive">Thymes</span>. <a href="login">Sign in now.</a></div>
-    </div>
-    <div class="header-bar-mob mobile">
-        <div class="header-logo-mob cursive">T</div>
-        <div><i class="fa fa-user"></i></div>
-        <div id="search-toggle"><i class="fa fa-search"></i></div>
-    </div>
-    <div id="s-bar" class="search-bar mobile">
-        <div class="search-pad-mob">
-            <div class="search-mob">
-                <span class="fa fa-search"></span>
-                <input placeholder="Search" type="text">
-            </div>
-        </div>
-    </div>
-    <div id="search-grow" class="mobile"></div>
+    {{ header }}
 
     <div class="page-content">
         <div id="central-column">

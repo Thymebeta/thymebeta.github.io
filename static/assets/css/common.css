@@ -186,6 +186,7 @@ html, body {
 .caption-bar {
   height: 45px;
   width: 100%;
+  display: none;
   background-color: #2e4819; }
 
 .caption-text {
@@ -209,7 +210,6 @@ html, body {
   padding-bottom: 16px; }
 
 .video-row {
-  height: auto;
   display: flex;
   flex-direction: row;
   height: 20vh;
@@ -233,7 +233,7 @@ html, body {
   background-color: #ddd;
   margin: 30% 10px;
   position: relative;
-  box-shadow: 0 0 0px #000; }
+  box-shadow: 0 0 0 #000; }
 
 .vbtn > i {
   position: absolute;
