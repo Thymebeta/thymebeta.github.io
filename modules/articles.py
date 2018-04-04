@@ -9,8 +9,26 @@ from sanic import response
 from .util.templating import template
 
 
+BLOG_ARTICLE = """
+<a href="/blog/{{ id }}">
+<div class="article-card">
+    <div class="thumb" style="background-image: url('{{ image }}')"></div>
+    <div class="title">{{ title }}</div>
+    <div class="description">{{ summary }}</div>
+
+    <div class="sub fb">
+        <div class="pfp fs" style="background-image: url('{{ pfp }}')"></div>
+        <div class="fg fc">
+            <div class="fg fb ctr-y author">{{ author }}</div>
+            <div class="fg fb ctr-y published">{{ date }}</div>
+        </div>
+    </div>
+</div></a>
+"""
+
+
 class ArticleFactory:
-    DATE_FORMAT = '%Y-%m-%d'
+    DATE_FORMAT = '%b %-m, %Y'
     WPM = 200
 
     def __init__(self, pool):
@@ -20,6 +38,7 @@ class ArticleFactory:
     def register(self, app):
         app.add_route(self.get_help_page, 'help/<page>')
         app.add_route(self.get_blog_post, 'blog/<page>')
+        app.add_route(self.get_blog_listing, 'blog/')
 
     def calculate_reading_time(self, text):
         words = start = 0
@@ -42,6 +61,24 @@ class ArticleFactory:
         displayed = str(math.ceil(minutes)) + ' min read'
 
         return displayed
+
+    async def get_blog_listing(self, _):
+        async with open_async('static/pages/blog.tmpl') as _file:
+            template_ = await _file.read()
+
+        async with self.pool.acquire() as con:
+            raw_articles = await con.fetch('''SELECT * FROM blog_posts;''')
+
+        articles = [
+            template(BLOG_ARTICLE, title=i["title"], summary=i["summary"],
+                     image=i["image"], pfp=i["pfp"], author=i["author"],
+                     date=i["edited"].strftime(self.DATE_FORMAT), id=i["id"])
+            for i in raw_articles
+        ]
+
+        html = template(template_, articles=''.join(articles))
+
+        return response.html(html, status=200)
 
     async def get_blog_post(self, _, page):
         async with self.pool.acquire() as con:

@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS help_pages (
 CREATE TABLE IF NOT EXISTS blog_posts (
   id TEXT UNIQUE,
   file TEXT UNIQUE,
+  summary TEXT,
+  title TEXT,
+  image TEXT,
+  pfp TEXT,
   author TEXT,
   edited TIMESTAMP
 );

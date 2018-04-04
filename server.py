@@ -28,11 +28,11 @@ async def serve_file(_):
 
 
 app.static('/assets', 'static/assets')
-app.static('/profile', 'static/profile/index.html')
-app.static('/upload', 'static/upload/index.html')
-app.static('/watch', 'static/watch/index.html')
-app.static('/login', 'static/login/index.html')
-app.static('/e', 'static/e/index.html')
+app.static('/profile', 'static/pages/profile.html')
+app.static('/upload', 'static/pages/upload.html')
+app.static('/watch', 'static/pages/watch.html')
+app.static('/login', 'static/pages/login.html')
+app.static('/e', 'static/pages/embed.html')
 app.static('favicon.ico', 'static/favicon.ico')
 
 
