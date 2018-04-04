@@ -32,7 +32,9 @@ class ArticleFactory:
     WPM = 200
 
     def __init__(self, pool):
-        self.md_parser = markdown2.Markdown()
+        self.md_parser = markdown2.Markdown(extras=[
+            'fenced-code-blocks',
+        ])
         self.pool = pool
 
     def register(self, app):
