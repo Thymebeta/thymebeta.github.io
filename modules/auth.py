@@ -4,6 +4,7 @@ import bcrypt
 import asyncpg
 
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 from sanic.exceptions import abort
 from sanic.response import json, HTTPResponse
@@ -80,7 +81,10 @@ class Authentication:
         :param request:
         :return:
         """
-        return {k: v[0] for k, v in request.form.items()}
+        rtn = defaultdict(lambda: '')
+        for k, v in request.form.items():
+            rtn[k] = v[0]
+        return rtn
 
     async def ping(self, _):
         """
@@ -175,7 +179,7 @@ class Authentication:
             except asyncpg.exceptions.UniqueViolationError:
                 return json({'err': 'Email already in use'}, status=403)
 
-        return json({'username': a['u']})
+        return json({'err': '', 'username': a['u']})
 
     async def login(self, request):
         """
@@ -212,7 +216,7 @@ class Authentication:
             request['session']['authenticated'] = True
             request['session']['user'] = user['userid']
             return json({'err': ''}, status=200)
-        else:
-            request['session']['authenticated'] = False
-            return json({'err': 'Incorrect email or password'}, status=400)
+
+        request['session']['authenticated'] = False
+        return json({'err': 'Incorrect email or password'}, status=400)
 

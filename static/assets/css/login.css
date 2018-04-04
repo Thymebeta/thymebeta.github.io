@@ -31,6 +31,9 @@ html, body {
 input {
   margin: 4px 0; }
 
+input[type='submit'] {
+  cursor: pointer; }
+
 .field {
   background-color: #fff;
   padding: 10px;
@@ -53,6 +56,14 @@ label > span {
 label > input {
   margin: 0;
   height: 100%; }
+
+#error {
+  color: #bd2600;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+  margin-top: -10px;
+  margin-bottom: 10px; }
 
 .btn {
   padding: 15px;
@@ -79,10 +90,25 @@ label > input {
   text-decoration: none;
   cursor: pointer; }
 
-.bot-links > a:hover {
+.bot-links > a:hover, .bot-links > a:focus {
   text-decoration: underline; }
 
 .pr, .r {
   display: none; }
+
+.disabled {
+  cursor: not-allowed !important;
+  color: #777; }
+
+.disabled * {
+  cursor: not-allowed !important;
+  pointer-events: none;
+  user-select: none;
+  -moz-user-select: none; }
+
+.disabled > .btn {
+  color: #fff;
+  background-color: #b3b3b3;
+  border: 1px solid #c2c2c2; }
 
 /*# sourceMappingURL=login.css.map */

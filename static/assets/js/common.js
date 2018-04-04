@@ -1,16 +1,20 @@
-var search_open = false;
-var API_URL = "http://127.0.0.1:8080";
-var BASE = "/";
-var FULL_URL = API_URL + BASE;
+let search_open = false;
+let API_URL = "http://127.0.0.1:8080";
+let BASE = "/";
+let FULL_URL = API_URL + BASE;
+let ip;
 
 
 function getIP(after) {
+    if (ip) { return after(ip); }
+
     $.ajax({
         dataType: "json",
         url: FULL_URL + "auth/getip",
         data: {},
         success: function(data) {
-            after(data["ip"]);
+            ip = data['ip'];
+            after(data['ip']);
         }
     });
 }
@@ -29,12 +33,13 @@ function getNonce(endpoint, after) {
             success: function(data) {
                 after(data["nonce"]);
             }
-        })
+        });
     });
 }
 function register(username, password, email, after) {
     let endpoint = "auth/register";
     getNonce(endpoint, function(nonce) {
+        let c = md5(nonce + password + username + email);
         $.post({
             dataType: "json",
             url: FULL_URL + endpoint,
@@ -43,17 +48,21 @@ function register(username, password, email, after) {
                 u: username,
                 p: password,
                 e: email,
-                c: md5(nonce + password + username + email)
+                c: c
             },
-            success: function(data) {
-                after(data);
+            success: function(data, _, xhr) {
+                after(data, xhr.status);
+            },
+            error: function(xhr) {
+                after(xhr.responseJSON, xhr.status);
             }
-        })
+        });
     });
 }
 function login(email, password, after) {
     let endpoint = "auth/login";
     getNonce(endpoint, function(nonce) {
+        let c = md5(nonce + password + email);
         $.post({
             dataType: "json",
             url: FULL_URL + endpoint,
@@ -61,18 +70,19 @@ function login(email, password, after) {
                 n: nonce,
                 p: password,
                 e: email,
-                c: md5(nonce + password + email)
+                c: c
             },
-            success: function(data) {
-                after(data);
+            success: function(data, _, xhr) {
+                after(data, xhr.status);
+            },
+            error: function(xhr) {
+                after(xhr.responseJSON, xhr.status);
             }
-        })
+        });
     });
 }
+getIP(function(){});
 
-//getIP(function(ip) {console.log(ip)});
-//getNonce("auth", function(nonce) {console.log(nonce)});
-//login("email", "paaass", function(d) {console.log(d)});
 
 $(function() {
     var clickH = "mousedown tap";
