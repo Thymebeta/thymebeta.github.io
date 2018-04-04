@@ -180,7 +180,8 @@ html, body {
   border: 1px solid #4b7429; }
 
 .btn-txt {
-  font-size: 12px; }
+  font-size: 12px;
+  text-decoration: none; }
 
 /* CAPTION */
 .caption-bar {
@@ -311,10 +312,6 @@ html, body {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  top: -20px;
-  left: -20px;
-  right: -20px;
-  bottom: -20px;
   top: 0;
   left: 0;
   right: 0;

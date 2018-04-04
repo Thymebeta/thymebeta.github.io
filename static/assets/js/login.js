@@ -1,6 +1,11 @@
 $(function (){
     let search = location.search.substring(1);
-    let url_param = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    let url_param = {};
+    if (search) {
+        url_param = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}', function (key, value) {
+            return key === "" ? value : decodeURIComponent(value)
+        })
+    }
 
     let $pwd = $("#pwd");
     let $uname = $("#uname");
@@ -23,6 +28,8 @@ $(function (){
                     $("#login-box *").prop("disabled", false);
                     $("#error").text(data["err"]).show().effect("shake", {distance: 2});
                 } else {
+                    localStorage.setItem('loggedIn', data['user']);
+
                     if (url_param.redirect) {
                         window.location.href = url_param.redirect;
                     } else {
@@ -44,6 +51,8 @@ $(function (){
                         $("#error").text(data["err"]).show().effect("shake", {distance: 2});
                     } else {
                         login($r_email.val(), $r_pwd.val(), function() {
+                            localStorage.setItem('loggedIn', data['user']);
+
                             if (url_param.redirect) {
                                 window.location.href = url_param.redirect;
                             } else {

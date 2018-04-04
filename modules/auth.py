@@ -72,6 +72,8 @@ class Authentication:
         post('register', self.register_ep)
         post('login', self.login)
 
+        app.get('logout')(self.logout)
+
     async def expire_nonce(self, ip, endp):
         async with self.pool.acquire() as con:
             await con.execute('''DELETE FROM nonces WHERE ip = $1 AND endpoint = $2;''', ip, endp)
@@ -261,7 +263,16 @@ class Authentication:
         if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
             request['session']['authenticated'] = True
             request['session']['user'] = user['userid']
-            return json({'err': ''}, status=200)
+            return json({'err': '', 'user': user['username']}, status=200)
 
         request['session']['authenticated'] = False
         return json({'err': 'Incorrect password'}, status=400)
+
+    async def logout(self, request):
+        """
+        GET URL/logout
+
+        Logout.
+        """
+        request['session']['authenticated'] = False
+        return redirect('/')

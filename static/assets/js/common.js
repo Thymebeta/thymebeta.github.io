@@ -105,5 +105,18 @@ $(function() {
         }
     });
 
-    $(".caption-bar").fadeIn();
+    if (localStorage.getItem('loggedIn') === null) {
+        $(".caption-bar").fadeIn();
+        $("#login-btn-nav").fadeIn();
+        $("#signup-btn-nav").fadeIn();
+    } else {
+        $("#login-btn-nav").hide();
+        $("#signup-btn-nav").hide();
+        $("#logout-btn-nav").show();
+        $("#username-nav").text(localStorage.getItem('loggedIn')).show();
+    }
+
+    $("#logout-btn-nav-a").click(function() {
+        localStorage.removeItem('loggedIn');
+    })
 });
