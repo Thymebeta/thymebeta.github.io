@@ -257,7 +257,7 @@ class Authentication:
 
         if len(users) == 0:
             # no user with email found
-            return json({'err': 'Email not found'}, status=404)
+            return json({'err': 'Incorrect email or password'}, status=400)
 
         user = users[0]
         if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
@@ -266,7 +266,7 @@ class Authentication:
             return json({'err': '', 'user': user['username']}, status=200)
 
         request['session']['authenticated'] = False
-        return json({'err': 'Incorrect password'}, status=400)
+        return json({'err': 'Incorrect email or password'}, status=400)
 
     async def logout(self, request):
         """
