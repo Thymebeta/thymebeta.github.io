@@ -8,3 +8,4 @@ sanic-session>=0.1.5
 aiomcache>=0.6.0
 pygments>=2.2.0
 zxcvbn-python>=4.4.22
+sanic-limiter>=0.1.3

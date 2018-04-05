@@ -11,8 +11,10 @@ from functools import partial, wraps
 from collections import defaultdict
 from inspect import isawaitable
 
+from sanic import Blueprint
 from sanic.exceptions import abort
 from sanic.response import json, redirect
+from sanic_limiter import Limiter, get_remote_address
 from zxcvbn import zxcvbn
 
 
@@ -34,7 +36,7 @@ def login_required(route=None):
     return privileged
 
 
-class Authentication:
+class Authentication(Blueprint):
     EMAIL_RE = re.compile(r'[^@ \r\n\t]+@([^@ \r\n\t]+?\.[^@\W]+)')
     ALLOW_CROSS_ORIGIN = True
     PASSWORD_THRESH = 3
@@ -49,30 +51,7 @@ class Authentication:
         except FileNotFoundError:
             self.email_blacklist = []
 
-    def register(self, app):
-        def get(endpoint, func):
-            async def wrapper(*args, **kwargs):
-                response = await func(*args, **kwargs)
-                if self.ALLOW_CROSS_ORIGIN:
-                    response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-            app.get(self.BASE + endpoint)(wrapper)
-
-        def post(endpoint, func):
-            async def wrapper(*args, **kwargs):
-                response = await func(*args, **kwargs)
-                if self.ALLOW_CROSS_ORIGIN:
-                    response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-            app.post(self.BASE + endpoint)(wrapper)
-
-        get('ping', self.ping)
-        get('getip', self.get_ip)
-        get('getnonce', self.get_nonce)
-        post('register', self.register_ep)
-        post('login', self.login)
-
-        app.get('logout')(self.logout)
+        super().__init__('Authentication', self.BASE)
 
     async def expire_nonce(self, ip, endp):
         async with self.pool.acquire() as con:
@@ -117,7 +96,13 @@ class Authentication:
             rtn[k] = v[0]
         return rtn
 
-    @staticmethod
+
+def auth_setup(app, pool):
+    auth = Authentication(pool)
+    limiter = Limiter(app, key_func=get_remote_address)
+    
+    @auth.route('ping')
+    @limiter.limit("1/second")
     async def ping(_):
         """
         GET URL/auth/ping
@@ -127,7 +112,8 @@ class Authentication:
 
         return json({"time": time.time()})
 
-    @staticmethod
+    @auth.route('getip')
+    @limiter.limit("1/second")
     async def get_ip(request):
         """
         GET URL/auth/getip
@@ -136,7 +122,9 @@ class Authentication:
         """
         return json({"ip": request.ip})
 
-    async def get_nonce(self, request):
+    @auth.route('getnonce')
+    @limiter.limit("1/second")
+    async def get_nonce(request):
         """
         GET URL/auth/getnonce
 
@@ -158,13 +146,13 @@ class Authentication:
             abort(400)
             return
 
-        check = self.md5(tme + request.ip)  # generate server check hash
+        check = auth.md5(tme + request.ip)  # generate server check hash
         if check != hsh:
             return json({'err': 'Discrepancy between client and server hash (possibly wrong IP)'}, status=500)
 
-        nonce = self.md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
-        await self.expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
-        async with self.pool.acquire() as con:
+        nonce = auth.md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
+        await auth.expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
+        async with auth.pool.acquire() as con:
             await con.execute(
                 '''
                 INSERT INTO nonces (nonce, ip, endpoint, time) VALUES ($1, $2, $3, $4) 
@@ -175,7 +163,9 @@ class Authentication:
 
         return json({"nonce": nonce})
 
-    async def register_ep(self, request):
+    @auth.route('register', methods=['POST'])
+    @limiter.limit("1/hour")
+    async def register_ep(request):
         """
         POST URL/auth/register
 
@@ -189,20 +179,20 @@ class Authentication:
         c hash      hash(nonce || password || username || email)
 
         """
-        a = self.get_form(request)
+        a = auth.get_form(request)
         try:
-            await self.check_nonce(request.ip, a['n'], '/auth/register')
+            await auth.check_nonce(request.ip, a['n'], '/auth/register')
         except ValueError as e:
             return json({'err': e.args[1]}, status=e.args[0])
 
-        hsh = self.md5(a['n'] + a['p'] + a['u'] + a['e'])
+        hsh = auth.md5(a['n'] + a['p'] + a['u'] + a['e'])
         if a['c'] != hsh:
             return json({'err': 'Discrepancy between client and server'}, status=400)
 
-        email_match = self.EMAIL_RE.search(a['e'])
+        email_match = auth.EMAIL_RE.search(a['e'])
         if not email_match:
             return json({'err': 'Invalid email'}, status=400)
-        if email_match[1].lower() in self.email_blacklist:
+        if email_match[1].lower() in auth.email_blacklist:
             return json({'err': 'Invalid email'}, status=400)
 
         if len(a['u']) <= 4:
@@ -211,25 +201,27 @@ class Authentication:
             return json({'err': 'Password required'}, status=400)
 
         password_check = zxcvbn(a['p'], user_inputs=[a['e'], a['e'].split('@')[0], a['u']])
-        if password_check['score'] < self.PASSWORD_THRESH:
+        if password_check['score'] < auth.PASSWORD_THRESH:
             return json({'err': 'Password insecure'}, status=400)
 
         phash = bcrypt.hashpw(
             a['p'].encode('utf8'),
             bcrypt.gensalt()
         ).decode()  # this is where the magic happens - generate the hash for the password
-        async with self.pool.acquire() as con:
+        async with auth.pool.acquire() as con:
             try:
                 await con.execute(
                     '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
-                    self.get_snowflake(), a['u'], a['e'], phash
+                    auth.get_snowflake(), a['u'], a['e'], phash
                 )
             except asyncpg.exceptions.UniqueViolationError:
                 return json({'err': 'Email already in use'}, status=403)
 
         return json({'err': '', 'username': a['u']})
 
-    async def login(self, request):
+    @auth.route('login', methods=['POST'])
+    @limiter.limit("1/minute")
+    async def login(request):
         """
         POST URL/auth/login
 
@@ -242,17 +234,17 @@ class Authentication:
         c hash      hash(nonce || password || email)
 
         """
-        a = self.get_form(request)
+        a = auth.get_form(request)
         try:
-            await self.check_nonce(request.ip, a['n'], '/auth/login')
+            await auth.check_nonce(request.ip, a['n'], '/auth/login')
         except ValueError as e:
             return json(e.args[1], status=e.args[0])
 
-        hsh = self.md5(a['n'] + a['p'] + a['e'])
+        hsh = auth.md5(a['n'] + a['p'] + a['e'])
         if a['c'] != hsh:
             return json({'err': 'Discrepancy between client and server'}, status=400)
 
-        async with self.pool.acquire() as con:
+        async with auth.pool.acquire() as con:
             users = await con.fetch('''SELECT * FROM users WHERE email = $1;''', a['e'])
 
         if len(users) == 0:
@@ -268,7 +260,8 @@ class Authentication:
         request['session']['authenticated'] = False
         return json({'err': 'Incorrect email or password'}, status=400)
 
-    async def logout(self, request):
+    @app.route('logout')
+    async def logout(request):
         """
         GET URL/logout
 
@@ -276,3 +269,10 @@ class Authentication:
         """
         request['session']['authenticated'] = False
         return redirect('/')
+
+    if auth.ALLOW_CROSS_ORIGIN:
+        @auth.middleware('response')
+        def allow_cross_origin(_, response):
+            response.headers['Access-Control-Allow-Origin'] = '*'
+
+    app.blueprint(auth)

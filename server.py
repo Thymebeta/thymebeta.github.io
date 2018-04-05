@@ -5,7 +5,7 @@ from sanic.exceptions import NotFound, FileNotFound
 from sanic_session import MemcacheSessionInterface
 
 from modules.util.serve_with_header import html_with_header, file
-from modules.auth import Authentication, login_required
+from modules.auth import auth_setup, login_required
 from modules.util.postgres import DatabasePool
 from modules.articles import ArticleFactory
 
@@ -17,7 +17,7 @@ app.listener('before_server_start')(pool.register_db)
 
 
 @app.listener('before_server_start')
-async def thing(_, loop):
+async def initialize_memcache(_, loop):
     client = aiomcache.Client("127.0.0.1", 11211, loop=loop)
     session_interface = MemcacheSessionInterface(client)
 
@@ -30,7 +30,7 @@ async def thing(_, loop):
         await session_interface.save(request, response)
 
 
-Authentication(pool).register(app)
+auth_setup(app, pool)
 ArticleFactory(pool).register(app)
 
 
