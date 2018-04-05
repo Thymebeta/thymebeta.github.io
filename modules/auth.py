@@ -17,6 +17,7 @@ from sanic.response import json, redirect
 from sanic_limiter import Limiter, get_remote_address
 from zxcvbn import zxcvbn
 
+ALLOW_CROSS_ORIGIN = True
 
 def login_required(route=None):
     if route is None:
@@ -38,13 +39,11 @@ def login_required(route=None):
 
 class Authentication(Blueprint):
     EMAIL_RE = re.compile(r'[^@ \r\n\t]+@([^@ \r\n\t]+?\.[^@\W]+)')
-    ALLOW_CROSS_ORIGIN = True
     PASSWORD_THRESH = 3
     BASE = 'auth/'
+    pool = None
 
-    def __init__(self, pool):
-        self.pool = pool
-
+    def __init__(self):
         try:
             with open('config/email_blacklist.txt') as _file:
                 self.email_blacklist = _file.read().lower().split('\n')
@@ -97,168 +96,183 @@ class Authentication(Blueprint):
         return rtn
 
 
-def auth_setup(app, pool):
-    auth = Authentication(pool)
-    limiter = Limiter(app, key_func=get_remote_address)
-    
-    @auth.route('ping')
-    @limiter.limit("1/second")
-    async def ping(_):
-        """
-        GET URL/auth/ping
+auth = Authentication()
+limiter = Limiter(key_func=get_remote_address)
 
-        returns time in UTC at server
-        """
+@auth.middleware('response')
+def allow_cross_origin(_, response):
+    if ALLOW_CROSS_ORIGIN:
+        response.headers['Access-Control-Allow-Origin'] = '*'
 
-        return json({"time": time.time()})
+@auth.route('ping')
+@limiter.limit("1/second")
+async def ping(_):
+    """
+    GET URL/auth/ping
 
-    @auth.route('getip')
-    @limiter.limit("1/second")
-    async def get_ip(request):
-        """
-        GET URL/auth/getip
+    returns time in UTC at server
+    """
 
-        returns ip of requester
-        """
-        return json({"ip": request.ip})
+    return json({"time": time.time()})
 
-    @auth.route('getnonce')
-    @limiter.limit("1/second")
-    async def get_nonce(request):
-        """
-        GET URL/auth/getnonce
 
-        generates a nonce that can be used for authenticating between requests
+@auth.route('getip')
+@limiter.limit("1/second")
+async def get_ip(request):
+    """
+    GET URL/auth/getip
 
-        args:
-        t  time     client unix ts
-        h  hash     hash(t | i)
-        e  endpoint endpoint (e.x. "/auth/login")
-        i  ip       GET /api/auth/getip
+    returns ip of requester
+    """
+    return json({"ip": request.ip})
 
-        """
+
+@auth.route('getnonce')
+@limiter.limit("1/second")
+async def get_nonce(request):
+    """
+    GET URL/auth/getnonce
+
+    generates a nonce that can be used for authenticating between requests
+
+    args:
+    t  time     client unix ts
+    h  hash     hash(t | i)
+    e  endpoint endpoint (e.x. "/auth/login")
+    i  ip       GET /api/auth/getip
+
+    """
+    try:
+        tme = request.raw_args['t']
+        hsh = request.raw_args['h']
+        endp = request.raw_args['e']
+        ip = request.raw_args['i']
+    except KeyError:
+        abort(400)
+        return
+
+    check = auth.md5(tme + request.ip)  # generate server check hash
+    if check != hsh:
+        return json({'err': 'Discrepancy between client and server hash (possibly wrong IP)'}, status=500)
+
+    nonce = auth.md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
+    await auth.expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
+    async with auth.pool.acquire() as con:
+        await con.execute(
+            '''
+            INSERT INTO nonces (nonce, ip, endpoint, time) VALUES ($1, $2, $3, $4) 
+            ON CONFLICT (ip) DO UPDATE SET nonce = $1, endpoint = $3, time = $4;
+            ''',
+            nonce, ip, endp, datetime.now()
+        )
+
+    return json({"nonce": nonce})
+
+
+@auth.route('register', methods=['POST'])
+@limiter.limit("1/hour")
+async def register_ep(request):
+    """
+    POST URL/auth/register
+
+    registers a user
+
+    args:
+    n nonce     the nonce the client just asked for (GET /auth/getnonce)
+    p password  the proposed password for the user
+    u username  the proposed username for the user
+    e email     the email for the user
+    c hash      hash(nonce || password || username || email)
+
+    """
+    a = auth.get_form(request)
+    try:
+        await auth.check_nonce(request.ip, a['n'], '/auth/register')
+    except ValueError as e:
+        return json({'err': e.args[1]}, status=e.args[0])
+
+    hsh = auth.md5(a['n'] + a['p'] + a['u'] + a['e'])
+    if a['c'] != hsh:
+        return json({'err': 'Discrepancy between client and server'}, status=400)
+
+    email_match = auth.EMAIL_RE.search(a['e'])
+    if not email_match:
+        return json({'err': 'Invalid email'}, status=400)
+    if email_match[1].lower() in auth.email_blacklist:
+        return json({'err': 'Invalid email'}, status=400)
+
+    if len(a['u']) <= 4:
+        return json({'err': 'Username must be longer than 4 characters'}, status=400)
+    if not a['p']:
+        return json({'err': 'Password required'}, status=400)
+
+    password_check = zxcvbn(a['p'], user_inputs=[a['e'], a['e'].split('@')[0], a['u']])
+    if password_check['score'] < auth.PASSWORD_THRESH:
+        return json({'err': 'Password insecure'}, status=400)
+
+    phash = bcrypt.hashpw(
+        a['p'].encode('utf8'),
+        bcrypt.gensalt()
+    ).decode()  # this is where the magic happens - generate the hash for the password
+    async with auth.pool.acquire() as con:
         try:
-            tme = request.raw_args['t']
-            hsh = request.raw_args['h']
-            endp = request.raw_args['e']
-            ip = request.raw_args['i']
-        except KeyError:
-            abort(400)
-            return
-
-        check = auth.md5(tme + request.ip)  # generate server check hash
-        if check != hsh:
-            return json({'err': 'Discrepancy between client and server hash (possibly wrong IP)'}, status=500)
-
-        nonce = auth.md5(ip + bcrypt.gensalt().decode()) + bcrypt.gensalt().decode()
-        await auth.expire_nonce(ip, endp)  # expire any old nonces from this ip for this endpoint
-        async with auth.pool.acquire() as con:
             await con.execute(
-                '''
-                INSERT INTO nonces (nonce, ip, endpoint, time) VALUES ($1, $2, $3, $4) 
-                ON CONFLICT (ip) DO UPDATE SET nonce = $1, endpoint = $3, time = $4;
-                ''',
-                nonce, ip, endp, datetime.now()
+                '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
+                auth.get_snowflake(), a['u'], a['e'], phash
             )
+        except asyncpg.exceptions.UniqueViolationError:
+            return json({'err': 'Email already in use'}, status=403)
 
-        return json({"nonce": nonce})
+    return json({'err': '', 'username': a['u']})
 
-    @auth.route('register', methods=['POST'])
-    @limiter.limit("1/hour")
-    async def register_ep(request):
-        """
-        POST URL/auth/register
 
-        registers a user
+@auth.route('login', methods=['POST'])
+@limiter.limit("1/minute")
+async def login(request):
+    """
+    POST URL/auth/login
 
-        args:
-        n nonce     the nonce the client just asked for (GET /auth/getnonce)
-        p password  the proposed password for the user
-        u username  the proposed username for the user
-        e email     the email for the user
-        c hash      hash(nonce || password || username || email)
+    login endpoint
 
-        """
-        a = auth.get_form(request)
-        try:
-            await auth.check_nonce(request.ip, a['n'], '/auth/register')
-        except ValueError as e:
-            return json({'err': e.args[1]}, status=e.args[0])
+    args:
+    n nonce     the nonce the client just asked for (GET /auth/getnonce)
+    p password  the proposed password for the user
+    e email     the email for the user
+    c hash      hash(nonce || password || email)
 
-        hsh = auth.md5(a['n'] + a['p'] + a['u'] + a['e'])
-        if a['c'] != hsh:
-            return json({'err': 'Discrepancy between client and server'}, status=400)
+    """
+    a = auth.get_form(request)
+    try:
+        await auth.check_nonce(request.ip, a['n'], '/auth/login')
+    except ValueError as e:
+        return json(e.args[1], status=e.args[0])
 
-        email_match = auth.EMAIL_RE.search(a['e'])
-        if not email_match:
-            return json({'err': 'Invalid email'}, status=400)
-        if email_match[1].lower() in auth.email_blacklist:
-            return json({'err': 'Invalid email'}, status=400)
+    hsh = auth.md5(a['n'] + a['p'] + a['e'])
+    if a['c'] != hsh:
+        return json({'err': 'Discrepancy between client and server'}, status=400)
 
-        if len(a['u']) <= 4:
-            return json({'err': 'Username must be longer than 4 characters'}, status=400)
-        if not a['p']:
-            return json({'err': 'Password required'}, status=400)
+    async with auth.pool.acquire() as con:
+        users = await con.fetch('''SELECT * FROM users WHERE email = $1;''', a['e'])
 
-        password_check = zxcvbn(a['p'], user_inputs=[a['e'], a['e'].split('@')[0], a['u']])
-        if password_check['score'] < auth.PASSWORD_THRESH:
-            return json({'err': 'Password insecure'}, status=400)
-
-        phash = bcrypt.hashpw(
-            a['p'].encode('utf8'),
-            bcrypt.gensalt()
-        ).decode()  # this is where the magic happens - generate the hash for the password
-        async with auth.pool.acquire() as con:
-            try:
-                await con.execute(
-                    '''INSERT INTO users (userid, username, email, pass) VALUES ($1, $2, $3, $4)''',
-                    auth.get_snowflake(), a['u'], a['e'], phash
-                )
-            except asyncpg.exceptions.UniqueViolationError:
-                return json({'err': 'Email already in use'}, status=403)
-
-        return json({'err': '', 'username': a['u']})
-
-    @auth.route('login', methods=['POST'])
-    @limiter.limit("1/minute")
-    async def login(request):
-        """
-        POST URL/auth/login
-
-        login endpoint
-
-        args:
-        n nonce     the nonce the client just asked for (GET /auth/getnonce)
-        p password  the proposed password for the user
-        e email     the email for the user
-        c hash      hash(nonce || password || email)
-
-        """
-        a = auth.get_form(request)
-        try:
-            await auth.check_nonce(request.ip, a['n'], '/auth/login')
-        except ValueError as e:
-            return json(e.args[1], status=e.args[0])
-
-        hsh = auth.md5(a['n'] + a['p'] + a['e'])
-        if a['c'] != hsh:
-            return json({'err': 'Discrepancy between client and server'}, status=400)
-
-        async with auth.pool.acquire() as con:
-            users = await con.fetch('''SELECT * FROM users WHERE email = $1;''', a['e'])
-
-        if len(users) == 0:
-            # no user with email found
-            return json({'err': 'Incorrect email or password'}, status=400)
-
-        user = users[0]
-        if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
-            request['session']['authenticated'] = True
-            request['session']['user'] = user['userid']
-            return json({'err': '', 'user': user['username']}, status=200)
-
-        request['session']['authenticated'] = False
+    if len(users) == 0:
+        # no user with email found
         return json({'err': 'Incorrect email or password'}, status=400)
+
+    user = users[0]
+    if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
+        request['session']['authenticated'] = True
+        request['session']['user'] = user['userid']
+        return json({'err': '', 'user': user['username']}, status=200)
+
+    request['session']['authenticated'] = False
+    return json({'err': 'Incorrect email or password'}, status=400)
+
+
+
+def auth_setup(app, pool):
+    auth.pool = pool
+    limiter.init_app(app)
+    limiter.app = app
 
     @app.route('logout')
     async def logout(request):
@@ -269,10 +283,5 @@ def auth_setup(app, pool):
         """
         request['session']['authenticated'] = False
         return redirect('/')
-
-    if auth.ALLOW_CROSS_ORIGIN:
-        @auth.middleware('response')
-        def allow_cross_origin(_, response):
-            response.headers['Access-Control-Allow-Origin'] = '*'
 
     app.blueprint(auth)
