@@ -1,10 +1,15 @@
 from aiofiles import open as open_async
 from asyncpg import create_pool
+from ruamel import yaml
+
+
+with open('config/database.yml') as creds:
+    config = yaml.safe_load(creds)
 
 
 class DatabasePool:
-    USERNAME = 'postgres'
-    PASSWORD = 'postgres'
+    USERNAME = config.get('user')
+    PASSWORD = config.get('pass')
 
     def __init__(self):
         self.pool = None
