@@ -56,7 +56,7 @@ async def serve_file(request):
 def static(endpoint, local_path, title):
     @app.route(endpoint, methods=['GET'])
     async def serve_jinja(request):
-        return jinja.render(local_path, request, title=title,
+        return jinja.render(local_path, request, title=title, rqst=request,
                             logged_in=request['session'].get('authenticated', False),
                             page_link=urllib.parse.quote_plus(request.path),
                             username=request['session'].get('user_n'))

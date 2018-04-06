@@ -52,7 +52,7 @@ class ArticleFactory:
         async with self.pool.acquire() as con:
             articles = await con.fetch('''SELECT * FROM blog_posts;''')
 
-        return self.jinja.render('blog.html', request, articles=articles, date_format=self.DATE_FORMAT,
+        return self.jinja.render('blog.html', request, articles=articles, date_format=self.DATE_FORMAT, rqst=request,
                                  logged_in=request['session'].get('authenticated', False),
                                  page_link=urllib.parse.quote_plus(request.path),
                                  username=request['session'].get('user_n'))
@@ -70,7 +70,7 @@ class ArticleFactory:
         date = ans["edited"].strftime(self.DATE_FORMAT)
         markdown, title = await self.get_page(f'dynamic/blog/{ans["file"]}', date, ans["author"])
 
-        return self.jinja.render('article.html', request, title=title, body=markdown,
+        return self.jinja.render('article.html', request, title=title, body=markdown, rqst=request,
                                  logged_in=request['session'].get('authenticated', False),
                                  page_link=urllib.parse.quote_plus(request.path),
                                  username=request['session'].get('user_n'))
@@ -89,7 +89,7 @@ class ArticleFactory:
 
         markdown, title = await self.get_page(f'dynamic/help/{ans["file"]}', date)
 
-        return self.jinja.render('article.html', request, title=title, body=markdown,
+        return self.jinja.render('article.html', request, title=title, body=markdown, rqst=request,
                                  logged_in=request['session'].get('authenticated', False),
                                  page_link=urllib.parse.quote_plus(request.path),
                                  username=request['session'].get('user_n'))
