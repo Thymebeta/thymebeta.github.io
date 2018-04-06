@@ -10,3 +10,4 @@ pygments>=2.2.0
 zxcvbn-python>=4.4.22
 sanic-limiter>=0.1.3
 sanic-jinja2>=0.7.0
+aiomcache>=0.6.0

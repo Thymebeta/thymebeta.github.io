@@ -153,7 +153,7 @@ async def ping(_):
 
 
 @auth.route('getip')
-@limiter.limit("1/second")
+@limiter.limit("10/10second")
 async def get_ip(request):
     """
     GET URL/auth/getip
