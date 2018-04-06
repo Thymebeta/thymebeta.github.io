@@ -33,4 +33,11 @@ CREATE TABLE IF NOT EXISTS sessions (
   token TEXT UNIQUE,
   username TEXT,
   userid TEXT
-)
+);
+
+CREATE TABLE IF NOT EXISTS upload_keys (
+  key TEXT UNIQUE,
+  url TEXT UNIQUE,
+  session_token TEXT,
+  expires TIMESTAMP
+);

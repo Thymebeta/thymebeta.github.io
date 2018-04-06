@@ -22,6 +22,7 @@ from zxcvbn import zxcvbn
 
 ALLOW_CROSS_ORIGIN = True
 
+
 def login_required(route=None):
     if route is None:
         return partial(login_required)

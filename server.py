@@ -7,9 +7,10 @@ from sanic_session import MemcacheSessionInterface
 from sanic_jinja2 import SanicJinja2
 from sanic import Sanic, response
 
-from modules.auth import auth_setup, login_required
 from modules.util.postgres import DatabasePool
 from modules.articles import ArticleFactory
+from modules.videos import videos_setup
+from modules.auth import auth_setup
 
 PORT = 8080
 
@@ -35,6 +36,7 @@ async def initialize_memcache(_, loop):
 
 
 auth_setup(app, pool)
+videos_setup(app, pool, jinja)
 ArticleFactory(pool, jinja).register(app)
 
 
@@ -42,15 +44,6 @@ ArticleFactory(pool, jinja).register(app)
 @app.exception(FileNotFound)
 async def not_found(*_, **__):
     return await response.file('static/404.html')
-
-
-@app.route("/upload", methods=["GET"])
-@login_required()
-async def serve_file(request):
-    return jinja.render('upload.html', request,
-                        logged_in=request['session'].get('authenticated', False),
-                        page_link=urllib.parse.quote_plus(request.path),
-                        username=request['session'].get('user_n'))
 
 
 def static(endpoint, local_path, title):

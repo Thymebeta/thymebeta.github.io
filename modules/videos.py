@@ -120,3 +120,12 @@ def videos_setup(app, pool, jinja):
     videos.pool = pool
 
     app.blueprint(videos)
+
+    def l(s, m, l):
+        print('cra')
+    app.error_handler.log = l
+
+    @app.middleware('request')
+    async def requestlog(request):
+        print(request)
+

@@ -50,17 +50,60 @@ $(function() {
         $("#upload-region").css({"min-height": "100%", "height": "100%"});
         $("#title").val(target_file.name);
 
-        $("#upload-bar>span").text("Uploading | 0%");
-        $("#u-bar-progress").text("Uploading | 0%")
-                            .css({"width": "0"});
+        $("#upload-bar>span").text(target_file.name + " | Pending");
+        $("#u-bar-progress").css({"width": "0"});
 
-        setInterval(function() {
-            $("#u-bar-progress").css({"width": upload_perc + "%"})
-                                .text(target_file.name + " | " + upload_perc + "%");
-            $("#upload-bar>span").text(target_file.name + " | " + upload_perc + "%");
-            upload_perc ++;
-            upload_perc = Math.min(upload_perc, 100);
-        }, 100);
+        $.ajax({
+            type: 'POST',
+            dataType: "json",
+            url: "/upload",
+            data: {},
+            success: function(data) {
+                let url = data['url'];
+                let key = data['key'];
+
+                $("#video-result-url").text(url).attr("href", url);
+                $("#sb-sub").fadeIn();
+
+                let reader = new FileReader();
+                reader.onload = function() {
+                    let arrayBuffer = reader.result;
+
+                    $.ajax({
+                        url: '/upload?key=' + key + '&f=' + target_file.name.split('.').slice(-1)[0],
+                        type: 'PUT',
+                        contentType: target_file.type,
+                        data: arrayBuffer,
+                        processData: false,
+                        xhr: function() {
+                            let xhr = new window.XMLHttpRequest();
+                            xhr.upload.addEventListener("progress", function(evt){
+                                if (evt.lengthComputable) {
+                                    upload_perc = parseInt( parseFloat(evt.loaded / evt.total) * 100);
+
+                                    $("#u-bar-progress").css({"width": upload_perc + "%"})
+                                        .text(target_file.name + " | " + upload_perc + "%");
+                                    $("#upload-bar>span").text(target_file.name + " | " + upload_perc + "%");
+                                }
+                            }, false);
+                            return xhr;
+                        },
+                        success: function(result) {
+                            alert("Upload finished.");
+                        },
+                        error: function() {
+                            $("#upload-bar>span").text(target_file.name + " | Failed");
+                            $("#u-bar-progress").css({"width": "0"});
+                        }
+                    });
+                };
+                reader.readAsArrayBuffer(target_file);
+            },
+            error: function() {
+                $("#upload-bar>span").text(target_file.name + " | Failed");
+            }
+        });
+
 
         $("#middle-logo").fadeOut(500);
         $("#uploading").fadeIn(500);

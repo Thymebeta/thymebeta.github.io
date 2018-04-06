@@ -46,9 +46,6 @@ class ArticleFactory:
         return displayed
 
     async def get_blog_listing(self, request):
-        # async with open_async('static/pages/blog.tmpl') as _file:
-        #     template_ = await _file.read()
-
         async with self.pool.acquire() as con:
             articles = await con.fetch('''SELECT * FROM blog_posts;''')
 
