@@ -1,0 +1,66 @@
+{% extends 'headed.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/assets/css/profile.css"/>
+{% endblock %}
+
+{% block body %}
+    <div class="profile-header">
+        <div class="header-pfp"></div>
+
+        <a class="pfp-settings icon-link"><i class="fas fa-fw fa-cogs" aria-hidden="true"></i><div>Settings</div></a>
+
+        <div class="profile-sub fb">
+            <div class="chan-name">Thyme</div>
+            <div class="fg"></div>
+            <div class="sub-links">
+                <a href="//twitter.com" target="_blank" class="icon-link"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><div>Twitter</div></a>
+                <a class="icon-link"><i class="fab fa-fw fa-youtube" aria-hidden="true"></i><div>YouTube</div></a>
+                <a class="icon-link"><i class="fab fa-fw fa-discord" aria-hidden="true"></i><div>Discord</div></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="lhs">
+        <div class="nothing-here">
+            There's nothing here.<br>Sorry about that.
+        </div>
+    </div>
+    <div id="rhs">
+        <div class="pane-video-card mini">
+            <p class="side-msg">
+                Oh hey. It's the Thyme Thyme account. That's a mouthful.<br>
+                <br>
+                Well. See y'all around.<br>
+                o/
+            </p>
+            <p class="side-msg-sub">Posted literally just now | Thyme</p>
+        </div>
+        <div class="pane-video-card mini">
+            <p class="side-msg">
+                I'm out of things to put here.<br>
+                Be nice?
+            </p>
+            <p class="side-msg-sub">Posted a wee while ago | Thyme</p>
+        </div>
+        <div class="pane-video-card mini">
+            <p class="side-msg">
+                Should this be for posting messages to followers? Or maybe linking other stuff? I can't decide.
+            </p>
+            <p class="side-msg-sub">Posted yesterday? Probably? | Thyme</p>
+        </div>
+        <div class="pane-video-card mini inverted">
+            <form action="">
+                <textarea class="add-msg" title="message" rows="3" name="message"></textarea>
+                <button class="msg-btn" type="submit">Post to board as Thyme</button>
+            </form>
+            <p class="side-msg-sub">All messages (aren't) screened for obscene words.</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block foot %}
+    <script src="/assets/js/profile.js" type="text/javascript"></script>
+{% endblock  %}

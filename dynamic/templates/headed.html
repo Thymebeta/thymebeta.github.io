@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+    <div class="header-bar nomobile">
+        <a href="/" style="text-decoration: none"><div class="header-logo cursive">Thyme</div></a>
+        <a style="text-decoration: none" href="/blog"><div class="nav-link">Blog</div></a>
+        <div class="nav-link">Browse</div>
+        <div class="nav-links fg">
+            {% if logged_in %}
+                <a style="text-decoration: none" href="/upload"><div class="nav-link">Upload</div></a>
+            {% else %}
+            {%  endif %}
+            <div class="search-pad">
+                <div class="search">
+                    <span class="fa fa-search"></span>
+                    <input placeholder="Search" type="text">
+                </div>
+            </div>
+        </div>
+
+        {% if logged_in %}
+            <div id="username-nav" class="nav-link">{{ username }}</div>
+        {% endif %}
+
+        <div class="nav-buttons">
+            {% if not logged_in %}
+                <a style="text-decoration: none" href="/login?redirect={{ page_link }}"><div id="login-btn-nav" class="nav-button"><div class="btn-txt">Log in</div></div></a>
+                <a style="text-decoration: none" href="/login?redirect={{ page_link }}"><div id="signup-btn-nav" class="nav-button"><div class="btn-txt">Sign up</div></div></a>
+            {% else %}
+                <div id="logout-btn-nav" class="nav-button"><a href="/logout" id="logout-btn-nav-a" class="btn-txt">Log out</a></div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {% if not logged_in %}
+        <div class="caption-bar nomobile">
+            <div class="caption-text">You are not signed in! You will be unable to save or upload <span class="cursive">Thymes</span>. <a href="/login?redirect={{ page_link }}">Sign in now.</a></div>
+        </div>
+    {%  endif %}
+
+    <div class="header-bar-mob mobile">
+        <a href="/" style="text-decoration: none;"><div class="header-logo-mob cursive">T</div></a>
+        <div><i class="fa fa-user"></i></div>
+        <div id="search-toggle"><i class="fa fa-search"></i></div>
+    </div>
+    <div id="s-bar" class="search-bar mobile">
+        <div class="search-pad-mob">
+            <div class="search-mob">
+                <span class="fa fa-search"></span>
+                <input placeholder="Search" type="text">
+            </div>
+        </div>
+    </div>
+    <div id="search-grow" class="mobile"></div>
+
+{% endblock %}

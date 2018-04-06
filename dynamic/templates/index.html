@@ -1,0 +1,78 @@
+{% extends 'headed.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/assets/css/home.css"/>
+{% endblock %}
+
+{% block body %}
+{% endblock %}
+
+{% block foot %}{% raw %}
+
+    <script id="minitemp" type="text/x-handlebars-template">​
+        <div class="pane-video-card mini fb">
+            <div class="thumb fs" style="background-image: url('{{ thumb }}')"></div>
+            <div class="mini-video-info fg">
+                <div class="fb flw title">
+                    <div class="pfp mini fs" style="background-image: url('{{ pfp }}')"></div>
+                    <div class="mini-title fg">{{ title }}</div>
+                </div>
+                <div class="flw fb">
+                    <div class="author fg">{{ author }}</div>
+                    <div class="views">{{ views }}</div>
+                </div>
+                <div class="description">
+                    {{ desc }}
+                    <div class="more" style="display:none">{{ descmore }}</div>
+                </div>
+                <div class="mini-btn-row"><div class="mini-show-more">SHOW MORE</div> | <div class="mini-full-btn">FULL PAGE</div></div>
+            </div>
+        </div>
+    </script>
+
+    <script id="fulltemp" type="text/x-handlebars-template">​
+        <div class="pane-video-card">
+            <div class="card-video-sec">
+                <iframe src="{{ video_url }}" allowfullscreen></iframe>
+            </div>
+            <div class="video-info ctr-y fb">
+                <div class="pfp fs" style="background-image: url('{{ pfp }}')"></div>
+                <div class="fg fc ctr-y">
+                    <div class="fg flw title">{{ title }}</div>
+                    <div class="fg flw fb">
+                        <div class="author fg">{{ author }}</div>
+                        <div class="views">{{ views }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="comments-tog">SHOW COMMENTS</div>
+            <div class="comments" style="display:none">
+                {{&commentHelper comments}}
+            </div>
+            <div class="show-full">Show full thread</div>
+        </div>
+
+    </script>
+    <script id="commenttemp" type="text/x-handlebars-template">​
+        {{#each comments}}
+
+            <div class="comment {{#if root}}root{{^}}child{{~/if}}">
+                <p><span class="cmt-ath">[-] {{ auth }}</span> <span class="cmt-time">{{ time }}</span></p>
+                <p class="cmt-dt">{{ content }}</p>
+                <div class="cmt-act"><p>reply</p></div>
+                {{#if children}}
+                {{&commentHelper children}}
+                {{/if}}
+            </div>
+
+        {{/each}}
+
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+    <script src="//code.jquery.com/pep/0.4.3/pep.js"></script>
+
+    <script src="/assets/js/new_home.js" type="text/javascript"></script>
+{% endraw %}{% endblock  %}

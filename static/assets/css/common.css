@@ -104,7 +104,7 @@ html, body {
 .search-pad {
   max-width: 400px;
   flex-grow: 1;
-  padding: 10px 10px; }
+  padding: 10px 10px 10px 25px; }
 
 .search-pad-mob {
   padding: 5px;
@@ -173,7 +173,11 @@ html, body {
   user-select: none;
   -moz-user-select: none;
   cursor: pointer;
-  border: 1px solid transparent; }
+  border: 1px solid transparent;
+  text-decoration: none; }
+
+.nav-button > a {
+  text-decoration: none; }
 
 .nav-button:hover {
   background-color: #4b7429;
@@ -187,7 +191,6 @@ html, body {
 .caption-bar {
   height: 45px;
   width: 100%;
-  display: none;
   background-color: #2e4819; }
 
 .caption-text {
@@ -253,7 +256,7 @@ html, body {
 .video-card {
   position: relative;
   background-color: #000;
-  box-shadow: 0 0 0px #000;
+  box-shadow: 0 0 0 #000;
   margin: 8px;
   display: flex;
   flex-direction: column;

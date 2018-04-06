@@ -1,10 +1,12 @@
+import urllib.parse
+
 import aiomcache
 
-from sanic import Sanic, response
 from sanic.exceptions import NotFound, FileNotFound
 from sanic_session import MemcacheSessionInterface
+from sanic_jinja2 import SanicJinja2
+from sanic import Sanic, response
 
-from modules.util.serve_with_header import html_with_header, file
 from modules.auth import auth_setup, login_required
 from modules.util.postgres import DatabasePool
 from modules.articles import ArticleFactory
@@ -12,6 +14,8 @@ from modules.articles import ArticleFactory
 PORT = 8080
 
 app = Sanic(__name__)
+jinja = SanicJinja2(app, pkg_path='dynamic/templates')
+
 pool = DatabasePool()
 app.listener('before_server_start')(pool.register_db)
 
@@ -31,7 +35,7 @@ async def initialize_memcache(_, loop):
 
 
 auth_setup(app, pool)
-ArticleFactory(pool).register(app)
+ArticleFactory(pool, jinja).register(app)
 
 
 @app.exception(NotFound)
@@ -42,18 +46,30 @@ async def not_found(*_, **__):
 
 @app.route("/upload", methods=["GET"])
 @login_required()
-async def serve_file(_):
-    return await file('static/pages/upload.html')
+async def serve_file(request):
+    return jinja.render('upload.html', request,
+                        logged_in=request['session'].get('authenticated', False),
+                        page_link=urllib.parse.quote_plus(request.path),
+                        username=request['session'].get('user_n'))
 
 
-html_with_header(app, '/profile', 'static/pages/profile.html')
-html_with_header(app, '/', 'static/index.html')
+def static(endpoint, local_path, title):
+    @app.route(endpoint, methods=['GET'])
+    async def serve_jinja(request):
+        return jinja.render(local_path, request, title=title,
+                            logged_in=request['session'].get('authenticated', False),
+                            page_link=urllib.parse.quote_plus(request.path),
+                            username=request['session'].get('user_n'))
 
-app.static('/assets', 'static/assets')
+
+static('/profile', 'profile.html', 'Profile')
+static('/', 'index.html', 'Home')
+
 app.static('/watch', 'static/pages/watch.html')
 app.static('/login', 'static/pages/login.html')
 app.static('/e', 'static/pages/embed.html')
 app.static('favicon.ico', 'static/favicon.ico')
+app.static('/assets', 'static/assets')
 
 
 if __name__ == "__main__":

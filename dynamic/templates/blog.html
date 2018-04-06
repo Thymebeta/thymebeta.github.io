@@ -1,0 +1,31 @@
+{% extends 'headed.html' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/assets/css/blog.css"/>
+{% endblock %}
+
+{% block body %}
+
+    {% for article in articles %}
+
+        <a href="/blog/{{ article.id }}">
+            <div class="article-card">
+                <div class="thumb" style="background-image: url('{{ article.image }}')"></div>
+                <div class="title">{{ article.title }}</div>
+                <div class="description">{{ article.summary }}</div>
+
+                <div class="sub fb">
+                    <div class="pfp fs" style="background-image: url('{{ article.pfp }}')"></div>
+                    <div class="fg fc">
+                        <div class="fg fb ctr-y author">{{ article.author }}</div>
+                        <div class="fg fb ctr-y published">{{ article.edited.strftime(date_format) }}</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+    {% endfor %}
+
+{% endblock %}

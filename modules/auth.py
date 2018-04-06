@@ -1,6 +1,9 @@
 import urllib.parse
+import binascii
 import hashlib
+import base64
 import time
+import os
 import re
 
 import asyncpg
@@ -40,6 +43,7 @@ def login_required(route=None):
 class Authentication(Blueprint):
     EMAIL_RE = re.compile(r'[^@ \r\n\t]+@([^@ \r\n\t]+?\.[^@\W]+)')
     PASSWORD_THRESH = 3
+    EPOCH = 1522970000
     BASE = 'auth/'
     pool = None
 
@@ -95,14 +99,46 @@ class Authentication(Blueprint):
             rtn[k] = v[0]
         return rtn
 
+    async def gen_session_id(self, user):
+        sid = base64.b64encode(str(user['userid']).encode()) + b'.'
+        sid += base64.b64encode(round(time.time() - self.EPOCH).to_bytes(2, byteorder='big')) + b'.'
+        sid += binascii.hexlify(os.urandom(16))
+        sid = sid.decode().replace('=', '')
+
+        async with self.pool.acquire() as con:
+            await con.execute('''INSERT INTO sessions (token, username, userid) VALUES ($1, $2, $3) 
+                                 ON CONFLICT (token) DO UPDATE SET username = $2, userid=$3;''',
+                                 sid, user['username'], user['userid'])
+
+        return sid
+
+    async def check_session_id(self, sid):
+        try:
+            uid, ts, _ = sid.split('.')
+
+            int(base64.b64decode(uid + '=' * (4 - (len(uid) % 4))))
+            int.from_bytes(base64.b64decode(ts + '=' * (4 - (len(ts) % 4))), byteorder='big')
+
+            async with self.pool.acquire() as con:
+                located = await con.fetch('''SELECT * FROM sessions WHERE token = $1;''', sid)
+
+            if not located:
+                return False, False
+
+            return located[0]['username'], located[0]['userid']
+        except ValueError:
+            return False, False
+
 
 auth = Authentication()
 limiter = Limiter(key_func=get_remote_address)
+
 
 @auth.middleware('response')
 def allow_cross_origin(_, response):
     if ALLOW_CROSS_ORIGIN:
         response.headers['Access-Control-Allow-Origin'] = '*'
+
 
 @auth.route('ping')
 @limiter.limit("1/second")
@@ -128,7 +164,7 @@ async def get_ip(request):
 
 
 @auth.route('getnonce')
-@limiter.limit("1/second")
+@limiter.limit("5/second")
 async def get_nonce(request):
     """
     GET URL/auth/getnonce
@@ -170,7 +206,7 @@ async def get_nonce(request):
 
 
 @auth.route('register', methods=['POST'])
-@limiter.limit("1/hour")
+@limiter.limit("2/hour")
 async def register_ep(request):
     """
     POST URL/auth/register
@@ -227,12 +263,13 @@ async def register_ep(request):
 
 
 @auth.route('login', methods=['POST'])
-@limiter.limit("1/minute")
+@limiter.limit("6/minute")
 async def login(request):
     """
     POST URL/auth/login
 
     login endpoint
+
 
     args:
     n nonce     the nonce the client just asked for (GET /auth/getnonce)
@@ -259,14 +296,16 @@ async def login(request):
         return json({'err': 'Incorrect email or password'}, status=400)
 
     user = users[0]
-    if bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
-        request['session']['authenticated'] = True
-        request['session']['user'] = user['userid']
-        return json({'err': '', 'user': user['username']}, status=200)
+    if not bcrypt.checkpw(a['p'].encode(), user['pass'].encode()):
+        request['session']['authenticated'] = False
+        return json({'err': 'Incorrect email or password'}, status=400)
 
-    request['session']['authenticated'] = False
-    return json({'err': 'Incorrect email or password'}, status=400)
-
+    request['session']['authenticated'] = True
+    request['session']['user'] = user['userid']
+    request['session']['user_n'] = user['username']
+    response = json({'err': '', 'user': user['username']}, status=200)
+    response.cookies['session_id'] = await auth.gen_session_id(user)
+    return response
 
 
 def auth_setup(app, pool):
@@ -274,11 +313,20 @@ def auth_setup(app, pool):
     limiter.init_app(app)
     limiter.app = app
 
+    @app.middleware('request')
+    async def check_old_session(request):
+        if request.get('session'):
+            if request.cookies.get('session_id') is not None:
+                username, userid = await auth.check_session_id(request.cookies.get('session_id'))
+                if username:
+                    request['session']['authenticated'] = True
+                    request['session']['user'] = userid
+                    request['session']['user_n'] = username
+
     @app.route('logout')
     async def logout(request):
         """
         GET URL/logout
-
         Logout.
         """
         request['session']['authenticated'] = False
