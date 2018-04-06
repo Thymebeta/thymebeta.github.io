@@ -1,5 +1,5 @@
 let search_open = false;
-let API_URL = "http://127.0.0.1:8080";
+let API_URL = "//";
 let BASE = "/";
 let FULL_URL = API_URL + BASE;
 let ip;
