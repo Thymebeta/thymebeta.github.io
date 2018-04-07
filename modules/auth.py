@@ -102,7 +102,7 @@ class Authentication(Blueprint):
 
     async def gen_session_id(self, user):
         sid = base64.b64encode(str(user['userid']).encode()) + b'.'
-        sid += base64.b64encode(round(time.time() - self.EPOCH).to_bytes(2, byteorder='big')) + b'.'
+        sid += base64.b64encode(round(time.time() - self.EPOCH).to_bytes(4, byteorder='big')) + b'.'
         sid += binascii.hexlify(os.urandom(16))
         sid = sid.decode().replace('=', '')
 

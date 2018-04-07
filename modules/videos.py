@@ -45,9 +45,9 @@ async def get_upload(request):
 async def post_upload(request):
     while True:
         key = base64.b64encode(str(request['session']['user']).encode()) + b'.'
-        key += base64.b64encode(round(time.time() - videos.EPOCH).to_bytes(2, byteorder='big')) + b'.'
+        key += base64.b64encode(round(time.time() - videos.EPOCH).to_bytes(4, byteorder='big')) + b'.'
         key += binascii.hexlify(os.urandom(16))
-        key = key.decode().replace('=', '')
+        key = key.decode().replace('=', '').replace('+', '-').replace('/', '_')
 
         url = base64.b64encode(uuid.uuid4().int.to_bytes(16, 'big')[:6])
         url = url.decode().strip('=').replace('+', '-').replace('/', '_')
@@ -65,12 +65,12 @@ async def post_upload(request):
     return response.json({'url': 'https://thymebeta.ml/' + url, 'key': key})
 
 
-@videos.put('upload')
+@videos.post('upload/<key>')
 @login_required()
-async def put_upload(request):
-    key = request.args.get('key')
-    if key is None:
-        return response.text("No key provided", status=400)
+async def receive_upload(request, key):
+    # key = request.args.get('key')
+    # if key is None:
+    #     return response.text("No key provided", status=400)
 
     source_format = request.args.get('f')
     if source_format not in videos.FORMATS:
@@ -79,11 +79,11 @@ async def put_upload(request):
     async with videos.pool.acquire() as con:
         ans = await con.fetch('''SELECT * FROM upload_keys WHERE key = $1;''', key)
     if not ans:
-        return response.text("Invalid key", status=401)
+        return response.text("Invalid key a", status=401)
 
-    async with videos.pool.acquire() as con:
-        # Keys are one-time, so once we know it exists, clear it.
-        await con.execute('''DELETE FROM upload_keys WHERE key = $1;''', key)
+    # async with videos.pool.acquire() as con:
+    #     # Keys are one-time, so once we know it exists, clear it.
+    #     await con.execute('''DELETE FROM upload_keys WHERE key = $1;''', key)
 
     if ans[0]["session_token"] != request.cookies.get('session_id'):
         return response.text("Invalid key", status=401)
@@ -93,26 +93,29 @@ async def put_upload(request):
     if not os.path.exists(f'static/videos/{ans[0]["url"]}'):
         os.makedirs(f'static/videos/{ans[0]["url"]}')
 
-    path = f'static/videos/{ans[0]["url"]}/source.' + source_format
-    async with open_async(path, 'w') as _:
-        pass
+    # path = f'static/videos/{ans[0]["url"]}/source.' + source_format
+    # async with open_async(path, 'w') as _:
+    #     pass
 
-    body = request.body
-    async with open_async(path, 'ab') as _file:
-        await _file.write(body)
+    # body = request.body
+    # async with open_async(path, 'ab') as _file:
+    #     await _file.write(body)
 
-    return response.text(ans[0]['url'])
+    # return response.text(ans[0]['url'])
 
-    while True:
-        print('c')
-        body = await request.stream.get()
-        print('d', len(body))
-        if body is None:
-            break
-        async with open_async(path, 'ab') as _file:
-            await _file.write(body)
+    # tot = 0
+    # while True:
+    #     body = await request.stream.get()
+    #     if body is None:
+    #         break
 
-    return response.text(ans[0]['url'])
+    #     tot += len(body)
+    #     print(f'Received {len(body)} bytes! ({tot} total)')
+    #     # async with open_async(path, 'ab') as _file:
+    #     #     await _file.write(body)
+
+    return response.json({})
+    # return response.text(ans[0]['url'])
 
 
 def videos_setup(app, pool, jinja):
@@ -120,12 +123,3 @@ def videos_setup(app, pool, jinja):
     videos.pool = pool
 
     app.blueprint(videos)
-
-    def l(s, m, l):
-        print('cra')
-    app.error_handler.log = l
-
-    @app.middleware('request')
-    async def requestlog(request):
-        print(request)
-
