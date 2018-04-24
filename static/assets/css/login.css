@@ -45,17 +45,16 @@ input[type='submit'] {
   border: 1px solid #bd2600;
   color: #bd2600; }
 
-label {
+span > span.fb {
   font-size: 0.8em;
   color: #777;
   margin: 4px 0; }
 
-label > span {
+span > span.fb > label {
   margin-left: 4px; }
 
-label > input {
-  margin: 0;
-  height: 100%; }
+span > span.fb > input {
+  margin: 0; }
 
 #error {
   color: #bd2600;

@@ -54,17 +54,16 @@ input[type='submit'] {
   color: #bd2600;
 }
 
-label {
+span>span.fb.ctr-y {
   font-size: 0.8em;
   color: #777;
   margin: 4px 0;
 }
-label>span {
+span>span.fb.ctr-y>label {
   margin-left: 4px;
 }
-label>input {
+span>span.fb.ctr-y>input {
   margin: 0;
-  height: 100%;
 }
 
 #error {

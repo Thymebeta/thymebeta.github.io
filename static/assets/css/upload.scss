@@ -5,12 +5,15 @@
   min-height: 100%;
   margin: 0 auto;
 
+  display: flex;
+  flex-grow: 1;
   transition: padding 0.2s ease, max-width 0.5s ease;
 }
 
 #page-region {
   min-height: 100%;
   position: relative;
+  flex-grow: 1;
 }
 #upload-region {
   width: 100%;
