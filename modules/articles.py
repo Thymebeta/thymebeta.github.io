@@ -19,6 +19,7 @@ class ArticleFactory:
         self.jinja = jinja
 
     def register(self, app):
+        app.add_route(lambda request: self.get_help_page(request, 'help'), 'help')
         app.add_route(self.get_help_page, 'help/<page>')
         app.add_route(self.get_blog_post, 'blog/<page>')
         app.add_route(self.get_blog_listing, 'blog/')
