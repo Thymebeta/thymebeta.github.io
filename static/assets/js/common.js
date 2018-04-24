@@ -103,5 +103,13 @@ $(function() {
             $dblock.show();
             $(this).text("SHOW LESS");
         }
+    }).on(clickH, "#username-nav", function(e) {
+        $("#header-menu").css({"width": ($(document).width() - $(e.target).offset().left - 10) + 'px'}).toggle();
+
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+    }).on(clickH, "#close-menu", function(e) {
+        $(e.target).parent().hide();
     });
 });
