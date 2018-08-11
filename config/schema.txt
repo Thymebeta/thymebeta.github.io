@@ -41,3 +41,15 @@ CREATE TABLE IF NOT EXISTS upload_keys (
   session_token TEXT,
   expires TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS videos (
+  id TEXT UNIQUE,
+  poster TEXT,
+  title TEXT,
+  description TEXT,
+  tags TEXT,
+  public INTEGER,
+  license TEXT,
+  uploaded TIMESTAMP,
+  sources TEXT
+)

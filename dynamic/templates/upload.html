@@ -19,12 +19,12 @@
         <div id="uploading" style="display: none" class="fb">
             <div id="uploading-sidebar">
                 <div id="video-thumb"></div>
-                <p id="sb-sub" style="display: none">Your video will be available at <a id="video-result-url" href=""></a> when processing is finished.<br><br><br><a href="">Learn more</a></p>
+                <p id="sb-sub" style="display: none">Your video will be available at <a target="_blank" id="video-result-url" href=""></a> when processing is finished.<br><br><br><a href="">Learn more</a></p>
             </div>
             <div id="uploading-main" class="fc">
                 <div class="fb">
-                    <div id="upload-bar"><span>Uploading | Peniding</span><div id="u-bar-progress">Uploading | Pening</div></div>
-                    <div class="btn il-btn">Post</div>
+                    <div id="upload-bar"><span>Uploading | Pending</span><div id="u-bar-progress">Uploading | Pending</div></div>
+                    <div id="save-btn" class="btn il-btn">Save</div>
                 </div>
                 <div id="tabs">
                     <div id="details-tab" class="tab active">Details</div>
@@ -51,10 +51,12 @@
                     </select>
                     <a href="">Should I use a license?</a>
                 </div>
+
+                <a target="_blank" class="btn ta-c" style="display:none" id="open-vid-link">Open Video</a>
             </div>
         </div>
 
-        <input id="file-upload" type="file" name="files[]" style="display: none">
+        <input id="file-upload" type="file" name="file" style="display: none">
     </div>
 {% endblock %}
 

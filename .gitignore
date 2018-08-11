@@ -1,4 +1,5 @@
 .idea/*
+cdn/*
 .sass-cache
 sass-cache*
 __pycache__

@@ -58,13 +58,13 @@ def static(endpoint, local_path, title):
 static('/profile', 'profile.html', 'Profile')
 static('/', 'index.html', 'Home')
 
-app.static('/watch', 'static/pages/watch.html')
 app.static('/login', 'static/pages/login.html')
 app.static('/e', 'static/pages/embed.html')
 app.static('favicon.ico', 'static/favicon.ico')
 app.static('/assets', 'static/assets')
+app.static('/cdn', 'cdn')
 
 
 if __name__ == "__main__":
     app.config.REQUEST_MAX_SIZE = 1024 * 1024 * 1024
-    app.run(host="0.0.0.0", port=PORT)
+    app.run(host="0.0.0.0", port=PORT, debug=True, auto_reload=True)

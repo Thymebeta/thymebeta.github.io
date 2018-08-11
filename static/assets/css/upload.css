@@ -256,7 +256,8 @@ select:-moz-focusring {
   background-color: #75b540;
   border: 1px solid #90c366;
   user-select: none;
-  -moz-user-select: none; }
+  -moz-user-select: none;
+  text-decoration: none; }
 
 .btn.disabled {
   color: #888;

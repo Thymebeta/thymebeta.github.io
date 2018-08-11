@@ -1,6 +1,6 @@
 asyncpg>=0.15.0
 bcrypt>=3.1.4
-sanic>=0.7.0
+git+git://github.com/channelcat/sanic.git
 uvloop>=0.9.1
 aiofiles>=0.3.2
 markdown2>=2.3.5
@@ -12,3 +12,4 @@ sanic-limiter>=0.1.2
 sanic-jinja2>=0.7.0
 aiomcache>=0.6.0
 ruamel.YAML>=0.15.37
+streaming-form-data

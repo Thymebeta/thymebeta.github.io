@@ -1,11 +1,12 @@
-$(function() {
+$(function () {
     // TODO: DO NOT LEAVE mp3 IN PROD CODE
-    let FORMATS = ["mov", "mpeg4", "mp4", "avi", "wmv", "mpegps", "flv", "3gpp", "webm", "mp3"];
+    let FORMATS = ["mov", "mpeg4", "mp4", "avi", "wmv", "mkv", "flv", "3gpp", "webm"];
 
     let clickH = "mousedown tap";
-    let upload_perc = 0;
-    let target_file = undefined;
+    let target_file = null;
     let do_change = true;
+    let upload_perc = 0;
+    let videoId = null;
 
     $("#upload-region").on("drop", function (e) {
         target_file = e.originalEvent.dataTransfer.files[0];
@@ -36,7 +37,9 @@ $(function() {
     });
 
     $("#file-upload").on("change", function () {
-        if (!do_change) { return; }
+        if (!do_change) {
+            return;
+        }
 
         let file = this.files[0];
 
@@ -66,10 +69,11 @@ $(function() {
                 let key = data['key'];
                 do_change = false;
 
+                videoId = data['id'];
+
                 $("#video-result-url").text(url).attr("href", url);
                 $("#sb-sub").fadeIn();
 
-                console.log('/upload/' + key + '?f=' + target_file.name.split('.').slice(-1)[0]);
                 $('#file-upload').fileupload({
                     dataType: 'json',
                     maxChunkSize: 10000000, // 1 kB
@@ -82,11 +86,11 @@ $(function() {
                             .text(target_file.name + " | " + upload_perc + "%");
                         $("#upload-bar>span").text(target_file.name + " | " + upload_perc + "%");
                     }
-                }).fileupload('send', {files: [target_file]}).success(function(result) {
-                    alert("Upload finished.");
-                }).error(function(_, e) {
-                    console.log(e)
-                    $("#upload-bar>span").text(target_file.name + " | Failed");
+                }).fileupload('send', {files: [target_file]}).done(function (result) {
+                    $("#open-vid-link").attr("href", "/w?v=" + videoId).show();
+                    $("#save-btn").trigger("mousedown");
+                }).fail(function (_, e) {
+                    $("#upload-bar>span").text(target_file.name + " | Failed: " + e.toString());
                     $("#u-bar-progress").css({"width": "0"});
                 });
             },
@@ -95,64 +99,36 @@ $(function() {
             }
         });
 
-        /*$.ajax({
-            type: 'POST',
-            dataType: "json",
-            url: "/upload",
-            data: {},
-            success: function(data) {
-                let url = data['url'];
-                let key = data['key'];
-
-                $("#video-result-url").text(url).attr("href", url);
-                $("#sb-sub").fadeIn();
-
-                let reader = new FileReader();
-                reader.onload = function() {
-                    let arrayBuffer = reader.result;
-
-                    $.ajax({
-                        url: '/upload?key=' + key + '&f=' + target_file.name.split('.').slice(-1)[0],
-                        type: 'PUT',
-                        contentType: target_file.type,
-                        data: arrayBuffer,
-                        processData: false,
-                        xhr: function() {
-                            let xhr = new window.XMLHttpRequest();
-                            xhr.upload.addEventListener("progress", function(evt){
-                                if (evt.lengthComputable) {
-                                    upload_perc = parseInt( parseFloat(evt.loaded / evt.total) * 100);
-
-                                    $("#u-bar-progress").css({"width": upload_perc + "%"})
-                                        .text(target_file.name + " | " + upload_perc + "%");
-                                    $("#upload-bar>span").text(target_file.name + " | " + upload_perc + "%");
-                                }
-                            }, false);
-                            return xhr;
-                        },
-                        success: function(result) {
-                            alert("Upload finished.");
-                        },
-                        error: function() {
-                            $("#upload-bar>span").text(target_file.name + " | Failed");
-                            $("#u-bar-progress").css({"width": "0"});
-                        }
-                    });
-                };
-                reader.readAsArrayBuffer(target_file);
-            },
-            error: function() {
-                $("#upload-bar>span").text(target_file.name + " | Failed");
-            }
-        });*/
-
-
         $("#middle-logo").fadeOut(500);
         $("#uploading").fadeIn(500);
 
         e.stopPropagation();
         e.stopImmediatePropagation();
         e.preventDefault();
+    });
+
+    $("div").on(clickH, "#save-btn", function(e) {
+        $.ajax({
+            type: 'POST',
+            dataType: "json",
+            url: "/edit_v",
+            data: {
+                id: videoId,
+                title: $("#title").val(),
+                desc: $("#description").val(),
+                tags: listTags,
+                pub: $("#privacy-dd").find(":selected").index(),
+                license: $("#license-dd").find(":selected").text(),
+            },
+            success: function () {
+                $("#save-btn").text("Saved")
+            },
+            error: function () {
+                $("#save-btn").text("Failed")
+            }
+        });
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     function listTags() {

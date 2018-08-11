@@ -311,8 +311,10 @@ async def login(request):
 
 def auth_setup(app, pool):
     auth.pool = pool
-    limiter.init_app(app)
-    limiter.app = app
+
+    ## sanic-limiter appears to be broken in 3.7
+    # limiter.init_app(app)
+    # limiter.app = app
 
     @app.middleware('request')
     async def check_old_session(request):
@@ -331,6 +333,7 @@ def auth_setup(app, pool):
         Logout.
         """
         request['session']['authenticated'] = False
+        request['session']['user'] = None
         return redirect('/')
 
     app.blueprint(auth)
